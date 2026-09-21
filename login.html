@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Administrator Sign In Console." />
+  <title>NexusPanel – Admin Login</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="auth-body">
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+  </script>
+
+  <div class="auth-wrapper">
+    <!-- Ambient Background Glows -->
+    <div class="auth-glow-top"></div>
+    <div class="auth-glow-bottom"></div>
+
+
+    <!-- Centered Admin Login Card -->
+    <div class="auth-card-container">
+      <div class="auth-admin-card">
+
+        <!-- Centered Brand Logo -->
+        <div class="auth-brand-center">
+          <div class="brand-logo-row">
+            <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+            <span class="logo-text">NexusPanel</span>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <div class="auth-header-text">
+          <h1 class="auth-title">Administrator Sign In</h1>
+          <p class="auth-subtitle">Enter your credentials to access the central management console.</p>
+        </div>
+
+        <!-- 1-Click Demo Credentials Pill -->
+        <div class="auth-demo-banner">
+          <span class="auth-demo-text">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Demo: <strong>admin@nexuspanel.io</strong></span>
+          </span>
+          <button type="button" class="auth-demo-btn" id="fillDemoBtn">
+            Fill Credentials
+          </button>
+        </div>
+
+        <!-- Login Form -->
+        <form class="auth-form" id="loginForm" autocomplete="on">
+
+          <!-- Email / Username Input -->
+          <div class="auth-field-group">
+            <label class="auth-label" for="loginEmail">Admin Email / Username</label>
+            <div class="auth-input-wrap">
+              <i class="fa-regular fa-envelope auth-input-icon"></i>
+              <input 
+                type="email" 
+                class="auth-input" 
+                id="loginEmail" 
+                placeholder="admin@nexuspanel.io" 
+                required 
+                autocomplete="username" 
+              />
+            </div>
+          </div>
+
+          <!-- Password Input -->
+          <div class="auth-field-group">
+            <div class="auth-label-row">
+              <label class="auth-label" for="loginPassword">Password</label>
+              <a href="#" class="auth-forgot-link" id="forgotPassLink">Forgot password?</a>
+            </div>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-lock auth-input-icon"></i>
+              <input 
+                type="password" 
+                class="auth-input" 
+                id="loginPassword" 
+                placeholder="••••••••••••" 
+                required 
+                autocomplete="current-password" 
+              />
+              <button 
+                type="button" 
+                class="auth-pass-toggle" 
+                data-target="loginPassword" 
+                aria-label="Toggle password visibility"
+              >
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <label class="auth-checkbox-label">
+            <input type="checkbox" class="auth-checkbox" id="rememberMe" checked />
+            <span>Keep this admin session active</span>
+          </label>
+
+          <!-- Submit Button -->
+          <button type="submit" class="auth-submit-btn" id="loginSubmitBtn">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span>Sign In to Console</span>
+          </button>
+
+          <!-- Security Footnote -->
+          <div class="auth-security-chip">
+            <i class="fa-solid fa-lock"></i>
+            <span>256-Bit SSL Encrypted &bull; 2FA Protected</span>
+          </div>
+
+        </form>
+
+        <!-- Register Link -->
+        <div class="auth-footer">
+          Need administrator access? 
+          <a href="register.html">Register Admin Account</a>
+        </div>
+
+      </div>
+
+      <!-- Copyright Notice -->
+      <div class="auth-bottom-note">
+        &copy; 2026 NexusPanel Inc. Authorized administrative personnel only.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── Forgot Password Modal ─────────────────────────────── -->
+  <div class="auth-modal-backdrop" id="forgotPassBackdrop" role="dialog" aria-modal="true" aria-labelledby="forgotTitle">
+    <div class="auth-modal">
+      
+      <div class="auth-modal-header">
+        <div class="auth-modal-icon">
+          <i class="fa-solid fa-key"></i>
+        </div>
+        <button type="button" class="auth-modal-close" id="closeForgotModalBtn" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <h3 class="auth-modal-title" id="forgotTitle">Reset Admin Password</h3>
+      <p class="auth-modal-sub">
+        Enter your administrative email address. A one-time secure recovery link will be dispatched immediately.
+      </p>
+
+      <form id="forgotPassForm">
+        <div class="auth-field-group" style="margin-bottom: 20px;">
+          <label class="auth-label" for="forgotEmail">Admin Email Address</label>
+          <div class="auth-input-wrap">
+            <i class="fa-regular fa-envelope auth-input-icon"></i>
+            <input 
+              type="email" 
+              class="auth-input" 
+              id="forgotEmail" 
+              placeholder="admin@nexuspanel.io" 
+              required 
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" id="forgotSubmitBtn">
+          Send Recovery Link
+        </button>
+      </form>
+
+      <!-- Confirmation Feedback Box -->
+      <div id="forgotSuccessBox" style="display: none; text-align: center; padding: 10px 0;">
+        <div style="font-size: 38px; color: var(--green); margin-bottom: 12px;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Recovery Link Dispatched</h4>
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 18px;">
+          If an admin profile exists for <strong id="sentEmailAddress" style="color:var(--text-primary);"></strong>, verification instructions have been sent.
+        </p>
+        <button type="button" class="auth-submit-btn" onclick="document.getElementById('forgotPassBackdrop').classList.remove('open');">
+          Return to Sign In
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

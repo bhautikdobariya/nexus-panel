@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Products & Inventory management dashboard for tracking catalog items, stock levels, pricing, and variants." />
+  <title>NexusPanel – Products &amp; Inventory</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item active" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search catalog, SKU, stock..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & ACTIONS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Products &amp; Inventory</h1>
+          <p class="page-subtitle">Manage your product catalog, stock health, variants, and pricing.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="exportAllProductsBtn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export Catalog
+          </button>
+          <button class="btn btn-primary" id="openAddProductBtn">
+            <i class="fa-solid fa-plus"></i> Add Product
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI METRIC CARDS -->
+      <section class="stats-grid" aria-label="Catalog Overview Metrics">
+        
+        <!-- Total Products -->
+        <div class="stat-card">
+          <div class="stat-icon icon-purple"><i class="fa-solid fa-box"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Products</p>
+            <h2 class="stat-value">1,420</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +18 added this week</p>
+          </div>
+        </div>
+
+        <!-- In Stock Products -->
+        <div class="stat-card">
+          <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Active &amp; In Stock</p>
+            <h2 class="stat-value">1,285</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-check"></i> 90.5% availability rate</p>
+          </div>
+        </div>
+
+        <!-- Low Stock Alerts -->
+        <div class="stat-card">
+          <div class="stat-icon icon-orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Low Stock Alerts</p>
+            <h2 class="stat-value">42</h2>
+            <p class="stat-change negative"><i class="fa-solid fa-triangle-exclamation"></i> Requires reordering</p>
+          </div>
+        </div>
+
+        <!-- Total Catalog Value -->
+        <div class="stat-card">
+          <div class="stat-icon icon-blue"><i class="fa-solid fa-vault"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Catalog Value</p>
+            <h2 class="stat-value">$384,500</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% inventory growth</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PRODUCTS CONTROL CARD (TABS + TOOLBAR) -->
+      <section class="order-tabs-card">
+        
+        <!-- Category Filter Tabs -->
+        <div class="order-tabs-nav">
+          <button class="order-tab-btn active" data-category="all">
+            All Products <span class="tab-count">1,420</span>
+          </button>
+          <button class="order-tab-btn" data-category="saas">
+            SaaS &amp; Software <span class="tab-count">480</span>
+          </button>
+          <button class="order-tab-btn" data-category="templates">
+            Templates &amp; Themes <span class="tab-count">390</span>
+          </button>
+          <button class="order-tab-btn" data-category="digital">
+            Digital Assets <span class="tab-count">310</span>
+          </button>
+          <button class="order-tab-btn" data-category="hardware">
+            Hardware &amp; IoT <span class="tab-count">240</span>
+          </button>
+        </div>
+
+        <!-- Toolbar: Search, Filters, & View Toggle -->
+        <div class="orders-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchProductsInput" placeholder="Filter by product title, SKU, or category..." />
+          </div>
+
+          <div class="toolbar-filters">
+            <!-- Stock Status Dropdown -->
+            <select class="filter-select" id="stockFilterSelect" aria-label="Stock Status Filter">
+              <option value="all">All Stock Status</option>
+              <option value="in-stock">In Stock</option>
+              <option value="low-stock">Low Stock</option>
+              <option value="out-of-stock">Out of Stock</option>
+            </select>
+
+            <!-- Sort By Dropdown -->
+            <select class="filter-select" id="sortSelect" aria-label="Sort Catalog">
+              <option value="newest">Sort: Newest</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="best-selling">Best Selling</option>
+              <option value="stock">Stock Level</option>
+            </select>
+
+            <!-- Grid vs Table View Switcher -->
+            <div class="view-toggle" role="group" aria-label="View Switcher">
+              <button class="view-btn active" id="viewGridBtn" title="Grid View" aria-label="Grid View">
+                <i class="fa-solid fa-grip"></i>
+              </button>
+              <button class="view-btn" id="viewTableBtn" title="Table View" aria-label="Table View">
+                <i class="fa-solid fa-list"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- VIEW 1: PRODUCTS GRID -->
+      <section class="products-grid" id="productsGrid">
+        <!-- Rendered dynamically by products.js -->
+      </section>
+
+      <!-- VIEW 2: PRODUCTS TABLE -->
+      <section class="products-table-container" id="productsTableContainer">
+        <div class="table-responsive">
+          <table class="data-table" style="min-width: 820px;">
+            <thead>
+              <tr>
+                <th style="width: 40px;">
+                  <input type="checkbox" class="order-check" id="selectAllProducts" aria-label="Select all products" />
+                </th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock Level</th>
+                <th>Total Sales</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <!-- Rendered dynamically by products.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PAGINATION CONTROLS -->
+      <section class="order-tabs-card" style="padding: 0;">
+        <div class="pagination-wrap">
+          <span class="pagination-info">Showing 1 to 8 of 1,420 products</span>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled aria-label="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="padding: 0 4px; color: var(--text-muted);">...</span>
+            <button class="page-btn">18</button>
+            <button class="page-btn" aria-label="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Floating Bulk Actions Bar -->
+  <div class="bulk-actions-bar" id="bulkActionsBar">
+    <span class="bulk-count-badge" id="bulkCountBadge">0 products selected</span>
+    <div class="bulk-btns">
+      <button class="btn btn-sm btn-primary" id="bulkStatusBtn"><i class="fa-solid fa-check"></i> Set In Stock</button>
+      <button class="btn btn-sm btn-outline" id="bulkExportBtn"><i class="fa-solid fa-download"></i> Export</button>
+      <button class="btn btn-sm btn-outline" id="bulkDeleteBtn" style="color: var(--red);"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+    <i class="fa-solid fa-xmark btn-deselect" id="deselectAllBtn" title="Deselect all"></i>
+  </div>
+
+  <!-- Add / Edit Product Modal -->
+  <div class="order-modal-backdrop" id="productModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="order-modal">
+      <div class="order-modal-header">
+        <div class="modal-title-wrap">
+          <h3 class="modal-order-id" id="modalTitle">Add New Product</h3>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="addProductForm">
+        <input type="hidden" id="editProductId" />
+        <div class="order-modal-body">
+          
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Product Title <span class="req">*</span></label>
+              <input type="text" class="form-input" id="prodNameInput" placeholder="e.g. NexusPanel Pro License" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Category <span class="req">*</span></label>
+              <select class="form-input" id="prodCategorySelect" required>
+                <option value="saas">SaaS &amp; Software</option>
+                <option value="templates">Templates &amp; Themes</option>
+                <option value="digital">Digital Assets</option>
+                <option value="hardware">Hardware &amp; IoT</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">SKU Code</label>
+              <input type="text" class="form-input" id="prodSkuInput" placeholder="e.g. SKU-NX-8821" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Stock Status</label>
+              <select class="form-input" id="prodStatusSelect">
+                <option value="in-stock">In Stock</option>
+                <option value="low-stock">Low Stock</option>
+                <option value="out-of-stock">Out of Stock</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Selling Price ($) <span class="req">*</span></label>
+              <input type="number" step="0.01" class="form-input" id="prodPriceInput" placeholder="199.00" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Compare-at Price ($)</label>
+              <input type="number" step="0.01" class="form-input" id="prodCompareInput" placeholder="249.00" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Initial Stock Quantity <span class="req">*</span></label>
+              <input type="number" class="form-input" id="prodStockInput" placeholder="100" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Low Stock Threshold</label>
+              <input type="number" class="form-input" placeholder="20" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Product Media</label>
+            <div class="image-dropzone">
+              <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+              <p class="dropzone-text">Click or drag image file here to upload</p>
+              <p class="dropzone-hint">PNG, JPG, WebP or SVG up to 5MB</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="order-modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelProductBtn">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="saveProductBtn">
+            <i class="fa-solid fa-check"></i> Save Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="assets/js/products.js"></script>
+</body>
+</html>

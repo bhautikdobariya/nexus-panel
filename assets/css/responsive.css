@@ -1,0 +1,28 @@
+/* =========================================================
+   NexusPanel – Responsive Overrides (responsive.css)
+   Extra breakpoints & utility overrides
+   ========================================================= */
+
+/* Extra large screens */
+@media (min-width: 1600px) {
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .page-content { max-width: 1480px; margin: 0 auto; }
+}
+
+/* Tablet landscape */
+@media (max-width: 1100px) {
+  .charts-row { grid-template-columns: 1fr; }
+}
+
+/* Tablet portrait */
+@media (max-width: 768px) {
+  .bottom-row { grid-template-columns: 1fr; }
+  .topbar { padding: 0 16px; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .stat-card { flex-direction: row; }
+  .data-table th,
+  .data-table td { padding: 10px 10px; }
+}

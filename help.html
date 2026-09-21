@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusPanel – Help &amp; Support Center</title>
+  <meta name="description" content="Find answers, explore developer guides, submit support tickets, and contact 24/7 technical customer support." />
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Core Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item active" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT WRAPPER ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search documentation, tickets, FAQs..." id="searchInput" />
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Theme Toggle -->
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList">
+              <li class="notif-item unread">
+                <div class="notif-icon-wrap" style="background:rgba(124,111,247,0.15); color:#7c6ff7">
+                  <i class="fa-solid fa-circle-question"></i>
+                </div>
+                <div class="notif-body">
+                  <p class="notif-title">Support Ticket #TK-8420</p>
+                  <p class="notif-text">Ticket resolved by senior engineer.</p>
+                  <p class="notif-time">2h ago</p>
+                </div>
+                <span class="notif-unread-dot"></span>
+              </li>
+              <li class="notif-item unread">
+                <div class="notif-icon-wrap" style="background:rgba(52,211,153,0.15); color:#34d399">
+                  <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div class="notif-body">
+                  <p class="notif-title">Security Audit Passed</p>
+                  <p class="notif-text">All vulnerability checks passed.</p>
+                  <p class="notif-time">5h ago</p>
+                </div>
+                <span class="notif-unread-dot"></span>
+              </li>
+            </ul>
+            <div class="notif-popover-footer">
+              <a href="messages.html" class="view-all-notifs">View all messages <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- SYSTEM STATUS BANNER -->
+      <div class="status-live-banner">
+        <div class="status-live-left">
+          <div class="status-live-indicator">
+            <span class="status-live-pulse"></span>
+            <span class="status-live-dot"></span>
+          </div>
+          <div>
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">All NexusPanel Systems Operational</span>
+            <span style="font-size: 12.5px; color: var(--text-secondary); margin-left: 8px;">99.98% SLA Uptime across Global Regions</span>
+          </div>
+        </div>
+        <a href="#" class="btn btn-outline btn-sm" onclick="showToast('All regional nodes (US-East, EU-Central, AP-South) operating at &lt;28ms latency.', 'success'); return false;">
+          <i class="fa-solid fa-chart-simple"></i> System Status
+        </a>
+      </div>
+
+      <!-- SUPPORT HERO -->
+      <div class="help-hero">
+        <h1 class="help-hero-title">How can we help you today?</h1>
+        <p class="help-hero-subtitle">Search our knowledge base, review step-by-step guides, or submit a request directly to our 24/7 technical team.</p>
+        
+        <div class="help-search-wrap">
+          <i class="fa-solid fa-magnifying-glass help-search-icon"></i>
+          <input type="text" class="help-search-input" id="helpSearchInput" placeholder="Search guides, articles, error codes, webhooks..." />
+        </div>
+
+        <div class="help-search-tags">
+          <span style="font-size: 12px; color: var(--text-muted);">Popular searches:</span>
+          <span class="help-tag-pill">#webhooks</span>
+          <span class="help-tag-pill">#2fa-setup</span>
+          <span class="help-tag-pill">#invoices</span>
+          <span class="help-tag-pill">#csv-import</span>
+          <span class="help-tag-pill">#api-keys</span>
+        </div>
+      </div>
+
+      <!-- HELP TOPICS GRID -->
+      <div class="help-topics-grid">
+        <div class="help-topic-card">
+          <div class="help-topic-icon" style="background: rgba(124, 111, 247, 0.15); color: var(--accent);">
+            <i class="fa-solid fa-rocket"></i>
+          </div>
+          <h3 class="help-topic-name">Getting Started</h3>
+          <p class="help-topic-desc">Store setup, dashboard onboarding, theme configuration, and first product uploads.</p>
+          <span class="help-topic-count">12 articles &rarr;</span>
+        </div>
+
+        <div class="help-topic-card">
+          <div class="help-topic-icon" style="background: rgba(79, 142, 247, 0.15); color: var(--blue);">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <h3 class="help-topic-name">Orders &amp; Fulfillment</h3>
+          <p class="help-topic-desc">Wholesale processing, shipment tracking, automated refunds, and delivery carrier webhooks.</p>
+          <span class="help-topic-count">18 articles &rarr;</span>
+        </div>
+
+        <div class="help-topic-card">
+          <div class="help-topic-icon" style="background: rgba(52, 211, 153, 0.15); color: var(--green);">
+            <i class="fa-solid fa-credit-card"></i>
+          </div>
+          <h3 class="help-topic-name">Billing &amp; Tax Plans</h3>
+          <p class="help-topic-desc">Payment gateways, stripe reconciliation, subscription upgrades, and EU VAT invoicing.</p>
+          <span class="help-topic-count">15 articles &rarr;</span>
+        </div>
+
+        <div class="help-topic-card">
+          <div class="help-topic-icon" style="background: rgba(251, 146, 60, 0.15); color: var(--orange);">
+            <i class="fa-solid fa-code"></i>
+          </div>
+          <h3 class="help-topic-name">Developer API &amp; SDKs</h3>
+          <p class="help-topic-desc">REST API documentation, rate limits, OAuth2 scopes, webhooks, and sandbox testing.</p>
+          <span class="help-topic-count">24 articles &rarr;</span>
+        </div>
+      </div>
+
+      <!-- 2-COLUMN SECTION: FAQ & TICKET SUBMISSION -->
+      <div class="help-content-grid content-grid">
+        
+        <!-- COLUMN 1: FAQ ACCORDION -->
+        <div>
+          <div class="settings-card-header" style="margin-bottom: 14px; padding: 0;">
+            <div>
+              <h2 class="settings-card-title" style="font-size: 20px;">Frequently Asked Questions</h2>
+              <p class="settings-card-desc">Quick solutions to common operational and architectural inquiries.</p>
+            </div>
+          </div>
+
+          <div class="faq-accordion">
+            <!-- FAQ 1 -->
+            <div class="faq-item open">
+              <button class="faq-question">
+                <span>How do I configure real-time order webhook notifications?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Navigate to <strong>Settings &rarr; Integrations &amp; API</strong>, click "Add Webhook Endpoint", paste your HTTPS handler URL, and select the <code>order.created</code> and <code>order.dispatched</code> triggers. You can test live payload dispatches using the "Send Test Ping" tool.</p>
+              </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Can I grant scoped permissions without full Super Admin access?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>Yes. Under <strong>Settings &rarr; Team Roles</strong>, you can assign roles such as "Inventory Manager", "Support Representative", or "Financial Auditor". Each role possesses granular read/write flags preventing access to billing or security settings.</p>
+              </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Where can I download past VAT invoices and tax statements?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>All finalized billing receipts are stored securely on the <strong>Billing</strong> page. Click the "PDF" button next to any historical billing cycle to immediately download a verified tax-compliant invoice.</p>
+              </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>What happens when my store exceeds monthly API limits?</span>
+                <i class="fa-solid fa-chevron-down faq-icon"></i>
+              </button>
+              <div class="faq-answer">
+                <p>NexusPanel does not interrupt mission-critical store checkouts. Additional API calls are cushioned with a 10% grace buffer while an automatic notification is dispatched to Alex Johnson to consider tier expansion.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIRECT CHANNELS CARD -->
+          <div class="settings-card" style="margin-top: 24px;">
+            <div class="settings-card-header">
+              <h2 class="settings-card-title">Instant Support Channels</h2>
+            </div>
+            <div class="settings-card-body help-support-channels">
+              <a href="messages.html" class="session-item" style="margin-bottom: 0; text-decoration: none;">
+                <div class="session-left">
+                  <div class="session-icon"><i class="fa-solid fa-headset"></i></div>
+                  <div>
+                    <p style="font-weight: 600; font-size: 14px; color: var(--text-primary);">24/7 Live Chat</p>
+                    <p style="font-size: 12px; color: var(--text-muted);">&lt; 2 min response time</p>
+                  </div>
+                </div>
+              </a>
+
+              <a href="mailto:support@nexuspanel.io" class="session-item" style="margin-bottom: 0; text-decoration: none;">
+                <div class="session-left">
+                  <div class="session-icon" style="background: rgba(79, 142, 247, 0.12); color: var(--blue);"><i class="fa-solid fa-envelope"></i></div>
+                  <div>
+                    <p style="font-weight: 600; font-size: 14px; color: var(--text-primary);">Email Support</p>
+                    <p style="font-size: 12px; color: var(--text-muted);">support@nexuspanel.io</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: SUBMIT A SUPPORT TICKET -->
+        <div>
+          <div class="settings-card">
+            <div class="settings-card-header">
+              <div class="settings-card-header-left">
+                <h2 class="settings-card-title"><i class="fa-solid fa-ticket"></i> Submit a Ticket</h2>
+                <p class="settings-card-desc">Need custom technical investigation? Our engineering team is on standby.</p>
+              </div>
+            </div>
+            <form id="supportTicketForm">
+              <div class="settings-card-body">
+                <div class="form-group">
+                  <label class="form-label">Subject / Issue Summary <span class="req">*</span></label>
+                  <input type="text" class="form-input" placeholder="e.g. Webhook delivery failure on order #9942" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Department / Category <span class="req">*</span></label>
+                  <select class="form-input" required>
+                    <option value="technical">Technical &amp; API Infrastructure</option>
+                    <option value="billing">Billing &amp; Subscription Inquiries</option>
+                    <option value="security">Security &amp; Auth Escalation</option>
+                    <option value="feature">Enterprise Feature Request</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Priority Level <span class="req">*</span></label>
+                  <select class="form-input" required>
+                    <option value="normal">Normal (Standard SLA)</option>
+                    <option value="high" selected>High (Enterprise Priority)</option>
+                    <option value="critical">Critical (Storefront Down / Outage)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Detailed Description <span class="req">*</span></label>
+                  <textarea class="form-textarea" rows="4" placeholder="Describe the steps to reproduce, error logs, or affected customer accounts..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Attachment (Logs or Screenshots)</label>
+                  <input type="file" class="form-input" style="padding: 9px;" />
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                  <i class="fa-solid fa-paper-plane"></i> Submit Support Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- Help Page Script -->
+  <script src="assets/js/help.js"></script>
+</body>
+</html>

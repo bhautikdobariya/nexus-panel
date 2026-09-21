@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – 404 Page Not Found. The requested administration resource could not be located." />
+  <title>NexusPanel – 404 Page Not Found</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    .error-container {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .error-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 48px 36px;
+      max-width: 560px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .error-code {
+      font-size: clamp(80px, 15vw, 120px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -3px;
+      background: linear-gradient(135deg, var(--accent) 0%, #a855f7 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+      display: inline-block;
+      filter: drop-shadow(0 4px 18px rgba(124, 111, 247, 0.35));
+    }
+    .error-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 99px;
+      background: rgba(124, 111, 247, 0.12);
+      border: 1px solid rgba(124, 111, 247, 0.25);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+    .error-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .error-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .error-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .error-quick-links {
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      font-size: 13px;
+    }
+    .error-quick-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color var(--trans);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .error-quick-links a:hover {
+      color: var(--accent);
+    }
+    .theme-corner-toggle {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body class="auth-body">
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+  </script>
+
+  <!-- Top-Right Theme Toggle -->
+  <div class="theme-corner-toggle">
+    <button class="icon-btn" id="errorThemeToggle" aria-label="Toggle Theme" style="background: var(--bg-card); border: 1px solid var(--border);">
+      <i class="fa-solid fa-moon" id="errorThemeIcon"></i>
+    </button>
+  </div>
+
+  <div class="auth-wrapper">
+    <!-- Ambient Background Glows -->
+    <div class="auth-glow-top"></div>
+    <div class="auth-glow-bottom"></div>
+
+    <div class="error-container">
+      <div class="error-card">
+        
+        <!-- Logo -->
+        <a href="index.html" class="brand-logo-row" style="text-decoration: none; justify-content: center; margin-bottom: 24px;">
+          <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+          <span class="logo-text">NexusPanel</span>
+        </a>
+
+        <div>
+          <span class="error-badge">
+            <i class="fa-solid fa-triangle-exclamation"></i> Error 404
+          </span>
+        </div>
+
+        <div class="error-code">404</div>
+
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-desc">
+          The administration view or resource you requested could not be found. It may have been moved, renamed, or is temporarily unavailable.
+        </p>
+
+        <div class="error-actions">
+          <a href="index.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
+            <i class="fa-solid fa-house"></i>
+            <span>Back to Dashboard</span>
+          </a>
+          <button type="button" class="btn btn-outline" onclick="history.back();" style="padding: 12px 20px; font-size: 14px;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Go Back</span>
+          </button>
+        </div>
+
+        <div class="error-quick-links">
+          <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i> Orders</a>
+          <a href="products.html"><i class="fa-solid fa-box"></i> Products</a>
+          <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+          <a href="help.html"><i class="fa-solid fa-circle-question"></i> Help Center</a>
+        </div>
+
+      </div>
+
+      <div class="auth-bottom-note" style="margin-top: 24px;">
+        &copy; 2026 NexusPanel Inc. All rights reserved.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme toggle handler
+    const errorThemeToggle = document.getElementById('errorThemeToggle');
+    const errorThemeIcon = document.getElementById('errorThemeIcon');
+
+    function syncIcon() {
+      const isLight = document.body.classList.contains('light-mode');
+      if (errorThemeIcon) {
+        errorThemeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      }
+    }
+    syncIcon();
+
+    errorThemeToggle?.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      document.documentElement.classList.toggle('light-mode', isLight);
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      syncIcon();
+    });
+  </script>
+</body>
+</html>

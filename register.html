@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Administrator Account Registration Console." />
+  <title>NexusPanel – Admin Registration</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body class="auth-body">
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+  </script>
+
+  <div class="auth-wrapper">
+    <!-- Ambient Background Glows -->
+    <div class="auth-glow-top"></div>
+    <div class="auth-glow-bottom"></div>
+
+
+    <!-- Centered Admin Registration Card -->
+    <div class="auth-card-container">
+      <div class="auth-admin-card">
+
+        <!-- Centered Brand Logo -->
+        <div class="auth-brand-center">
+          <div class="brand-logo-row">
+            <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+            <span class="logo-text">NexusPanel</span>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <div class="auth-header-text">
+          <h1 class="auth-title">Create Admin Account</h1>
+          <p class="auth-subtitle">Provision administrative credentials for system console access.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form class="auth-form" id="registerForm" autocomplete="on">
+
+          <!-- Full Name -->
+          <div class="auth-field-group">
+            <label class="auth-label" for="regName">Full Name</label>
+            <div class="auth-input-wrap">
+              <i class="fa-regular fa-user auth-input-icon"></i>
+              <input 
+                type="text" 
+                class="auth-input" 
+                id="regName" 
+                placeholder="Alex Johnson" 
+                required 
+                autocomplete="name" 
+              />
+            </div>
+          </div>
+
+          <!-- Admin Work Email -->
+          <div class="auth-field-group">
+            <label class="auth-label" for="regEmail">Work Email Address</label>
+            <div class="auth-input-wrap">
+              <i class="fa-regular fa-envelope auth-input-icon"></i>
+              <input 
+                type="email" 
+                class="auth-input" 
+                id="regEmail" 
+                placeholder="alex.johnson@nexuspanel.io" 
+                required 
+                autocomplete="email" 
+              />
+            </div>
+          </div>
+
+          <!-- Admin Role Assignment -->
+          <div class="auth-field-group">
+            <label class="auth-label" for="regRole">Role &amp; Access Level</label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-shield-halved auth-input-icon"></i>
+              <select class="auth-select" id="regRole" required>
+                <option value="super_admin">Super Administrator (Full Access)</option>
+                <option value="ops_manager">Operations Manager</option>
+                <option value="finance_admin">Finance &amp; Billing Officer</option>
+                <option value="support_lead">Support &amp; CRM Lead</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Create Password -->
+          <div class="auth-field-group">
+            <label class="auth-label" for="regPassword">Master Password</label>
+            <div class="auth-input-wrap">
+              <i class="fa-solid fa-lock auth-input-icon"></i>
+              <input 
+                type="password" 
+                class="auth-input" 
+                id="regPassword" 
+                placeholder="Minimum 8 characters" 
+                required 
+                autocomplete="new-password" 
+              />
+              <button 
+                type="button" 
+                class="auth-pass-toggle" 
+                data-target="regPassword" 
+                aria-label="Toggle password visibility"
+              >
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+
+            <!-- Password Strength Bar & Checklist -->
+            <div class="pass-strength-container">
+              <div class="pass-strength-bar">
+                <div class="pass-strength-fill" id="strengthFill"></div>
+              </div>
+              <div class="pass-strength-meta">
+                <span class="pass-strength-text" id="strengthText">Password Strength</span>
+                <span style="color:var(--text-muted);">8+ chars required</span>
+              </div>
+              <div class="pass-req-list">
+                <div class="pass-req-item" id="reqLength">
+                  <i class="fa-regular fa-circle"></i> 8+ characters
+                </div>
+                <div class="pass-req-item" id="reqUpper">
+                  <i class="fa-regular fa-circle"></i> Upper &amp; lowercase
+                </div>
+                <div class="pass-req-item" id="reqNumber">
+                  <i class="fa-regular fa-circle"></i> At least 1 number
+                </div>
+                <div class="pass-req-item" id="reqSymbol">
+                  <i class="fa-regular fa-circle"></i> 1 special symbol
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Policy Compliance Checkbox -->
+          <label class="auth-checkbox-label">
+            <input type="checkbox" class="auth-checkbox" id="regTerms" required />
+            <span>
+              I agree to the <a href="#" onclick="showToast('NexusPanel Admin Compliance: Mandatory 2FA and session audit logging policies active.', 'info'); return false;">Admin Security Policy</a> and Access Governance terms.
+            </span>
+          </label>
+
+          <!-- Submit Button -->
+          <button type="submit" class="auth-submit-btn" id="registerSubmitBtn">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Register Admin Account</span>
+          </button>
+
+          <!-- Security Footnote -->
+          <div class="auth-security-chip">
+            <i class="fa-solid fa-key"></i>
+            <span>Role-Based Access Control (RBAC) Enforced</span>
+          </div>
+
+        </form>
+
+        <!-- Login Link -->
+        <div class="auth-footer">
+          Already have an administrator account? 
+          <a href="login.html">Sign In</a>
+        </div>
+
+      </div>
+
+      <!-- Copyright Notice -->
+      <div class="auth-bottom-note">
+        &copy; 2026 NexusPanel Inc. Enterprise security &amp; audit policies apply.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>

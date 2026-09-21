@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Analytics & Performance insights, tracking user metrics, traffic sources, and conversion funnels." />
+  <title>NexusPanel – Analytics &amp; Performance</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item active" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search analytics metrics..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & DATE RANGE CONTROLS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Analytics &amp; Performance</h1>
+          <p class="page-subtitle">Track audience engagement, traffic sources, and conversion funnels.</p>
+        </div>
+        <div class="header-actions">
+          <div class="filter-group" role="group" aria-label="Date Range Filter">
+            <button class="filter-pill active" data-range="7d">7D</button>
+            <button class="filter-pill" data-range="30d">30D</button>
+            <button class="filter-pill" data-range="90d">90D</button>
+            <button class="filter-pill" data-range="1y">1Y</button>
+          </div>
+          <button class="btn btn-outline" id="exportBtn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export Report
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI METRIC CARDS WITH SPARKLINES -->
+      <section class="stats-grid" aria-label="Key Performance Indicators">
+        
+        <!-- Metric 1: Total Pageviews -->
+        <div class="stat-card stat-card-analytics">
+          <div class="stat-card-top">
+            <div>
+              <p class="stat-label">Total Pageviews</p>
+              <h2 class="stat-value">284,590</h2>
+            </div>
+            <div class="stat-icon icon-purple"><i class="fa-solid fa-eye"></i></div>
+          </div>
+          <div class="stat-card-bottom">
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% vs last period</p>
+            <div class="sparkline-wrap">
+              <canvas id="sparkPageviews"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric 2: Unique Visitors -->
+        <div class="stat-card stat-card-analytics">
+          <div class="stat-card-top">
+            <div>
+              <p class="stat-label">Unique Visitors</p>
+              <h2 class="stat-value">96,820</h2>
+            </div>
+            <div class="stat-icon icon-blue"><i class="fa-solid fa-users"></i></div>
+          </div>
+          <div class="stat-card-bottom">
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +9.4% vs last period</p>
+            <div class="sparkline-wrap">
+              <canvas id="sparkVisitors"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric 3: Avg Session Duration -->
+        <div class="stat-card stat-card-analytics">
+          <div class="stat-card-top">
+            <div>
+              <p class="stat-label">Avg. Session Duration</p>
+              <h2 class="stat-value">3m 48s</h2>
+            </div>
+            <div class="stat-icon icon-green"><i class="fa-solid fa-stopwatch"></i></div>
+          </div>
+          <div class="stat-card-bottom">
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +4.8% vs last period</p>
+            <div class="sparkline-wrap">
+              <canvas id="sparkDuration"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metric 4: Bounce Rate -->
+        <div class="stat-card stat-card-analytics">
+          <div class="stat-card-top">
+            <div>
+              <p class="stat-label">Bounce Rate</p>
+              <h2 class="stat-value">34.2%</h2>
+            </div>
+            <div class="stat-icon icon-orange"><i class="fa-solid fa-arrow-turn-down"></i></div>
+          </div>
+          <div class="stat-card-bottom">
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-down"></i> -2.6% improvement</p>
+            <div class="sparkline-wrap">
+              <canvas id="sparkBounce"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- AUDIENCE GROWTH CHART + REAL-TIME WIDGET -->
+      <section class="charts-row">
+        
+        <!-- Audience Comparison Chart -->
+        <div class="card chart-card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Audience Growth &amp; Traffic Overview</h3>
+              <p class="stat-label" style="margin-top:2px; margin-bottom:0;">Comparing total pageviews and unique visitors over time</p>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="audienceChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Real-Time Active Users Widget -->
+        <div class="card chart-card chart-card-sm">
+          <div class="card-header">
+            <h3 class="card-title">Real-Time Activity</h3>
+            <span class="live-badge"><span class="pulse-dot"></span> LIVE</span>
+          </div>
+          <div>
+            <div class="realtime-count" id="realtimeCount">142</div>
+            <p class="realtime-sub">Active visitors browsing the website right now</p>
+          </div>
+          <div class="card-title" style="font-size: 13px; margin-bottom: 12px; color: var(--text-secondary);">
+            Top Active Pages
+          </div>
+          <div class="realtime-pages">
+            <div class="rt-page-item">
+              <span class="rt-page-name">/dashboard</span>
+              <span class="rt-page-count">58 users</span>
+            </div>
+            <div class="rt-page-item">
+              <span class="rt-page-name">/pricing</span>
+              <span class="rt-page-count">34 users</span>
+            </div>
+            <div class="rt-page-item">
+              <span class="rt-page-name">/docs/quickstart</span>
+              <span class="rt-page-count">27 users</span>
+            </div>
+            <div class="rt-page-item">
+              <span class="rt-page-name">/features/analytics</span>
+              <span class="rt-page-count">15 users</span>
+            </div>
+            <div class="rt-page-item">
+              <span class="rt-page-name">/blog/updates-2026</span>
+              <span class="rt-page-count">8 users</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CONVERSION FUNNEL + DEVICES + BROWSERS (3 COLUMNS) -->
+      <section class="analytics-grid-3">
+
+        <!-- Device Breakdown -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Device Breakdown</h3>
+            <span class="badge">Traffic Share</span>
+          </div>
+          <div class="chart-wrap-donut">
+            <canvas id="deviceChart"></canvas>
+          </div>
+          <div class="chart-legend" id="deviceLegend"></div>
+        </div>
+
+        <!-- User Journey Funnel -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Conversion Funnel</h3>
+            <span class="stat-change positive" style="margin:0;"><i class="fa-solid fa-bullseye"></i> 5.2% Total CVR</span>
+          </div>
+          <div class="funnel-list">
+            <div class="funnel-step">
+              <div class="funnel-header">
+                <span class="funnel-title">1. Impressions</span>
+                <span class="funnel-val">1.2M <span>(100%)</span></span>
+              </div>
+              <div class="funnel-track">
+                <div class="funnel-fill" style="width: 100%; background: var(--accent);"></div>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-header">
+                <span class="funnel-title">2. Site Visits</span>
+                <span class="funnel-val">284.5k <span>(23.7%)</span></span>
+              </div>
+              <div class="funnel-track">
+                <div class="funnel-fill" style="width: 78%; background: var(--blue);"></div>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-header">
+                <span class="funnel-title">3. Product Views</span>
+                <span class="funnel-val">112.3k <span>(39.5%)</span></span>
+              </div>
+              <div class="funnel-track">
+                <div class="funnel-fill" style="width: 54%; background: var(--green);"></div>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-header">
+                <span class="funnel-title">4. Cart Additions</span>
+                <span class="funnel-val">38.6k <span>(34.4%)</span></span>
+              </div>
+              <div class="funnel-track">
+                <div class="funnel-fill" style="width: 32%; background: var(--orange);"></div>
+              </div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-header">
+                <span class="funnel-title">5. Successful Checkouts</span>
+                <span class="funnel-val">14.8k <span>(38.3%)</span></span>
+              </div>
+              <div class="funnel-track">
+                <div class="funnel-fill" style="width: 18%; background: #c084fc;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Browsers -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Top Browsers</h3>
+            <span class="link-btn">Details</span>
+          </div>
+          <div class="browser-list">
+            <div class="browser-item">
+              <div class="browser-icon" style="color: #4285f4;"><i class="fa-brands fa-chrome"></i></div>
+              <div class="browser-info">
+                <div class="browser-name-row">
+                  <span class="browser-name">Google Chrome</span>
+                  <span class="browser-val">64.2%</span>
+                </div>
+                <div class="funnel-track">
+                  <div class="funnel-fill" style="width: 64.2%; background: #4285f4;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="browser-item">
+              <div class="browser-icon" style="color: #007aff;"><i class="fa-brands fa-safari"></i></div>
+              <div class="browser-info">
+                <div class="browser-name-row">
+                  <span class="browser-name">Apple Safari</span>
+                  <span class="browser-val">21.5%</span>
+                </div>
+                <div class="funnel-track">
+                  <div class="funnel-fill" style="width: 21.5%; background: #007aff;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="browser-item">
+              <div class="browser-icon" style="color: #ff7139;"><i class="fa-brands fa-firefox"></i></div>
+              <div class="browser-info">
+                <div class="browser-name-row">
+                  <span class="browser-name">Mozilla Firefox</span>
+                  <span class="browser-val">8.4%</span>
+                </div>
+                <div class="funnel-track">
+                  <div class="funnel-fill" style="width: 8.4%; background: #ff7139;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="browser-item">
+              <div class="browser-icon" style="color: #0078d7;"><i class="fa-brands fa-edge"></i></div>
+              <div class="browser-info">
+                <div class="browser-name-row">
+                  <span class="browser-name">Microsoft Edge</span>
+                  <span class="browser-val">5.9%</span>
+                </div>
+                <div class="funnel-track">
+                  <div class="funnel-fill" style="width: 5.9%; background: #0078d7;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- TOP PAGES TABLE + GEOLOCATION (2 COLUMNS) -->
+      <section class="analytics-grid-2">
+
+        <!-- Top Visited Pages Table -->
+        <div class="card table-card">
+          <div class="card-header">
+            <h3 class="card-title">Top Visited Pages</h3>
+            <a href="#" class="link-btn">View All <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Page URL</th>
+                  <th>Pageviews</th>
+                  <th>Unique</th>
+                  <th>Avg. Time</th>
+                  <th>Bounce</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="cust-name">/dashboard</span></td>
+                  <td><strong>94,120</strong></td>
+                  <td>42,500</td>
+                  <td>4m 12s</td>
+                  <td><span class="status-badge status-completed">24.1%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="cust-name">/pricing</span></td>
+                  <td><strong>62,450</strong></td>
+                  <td>31,200</td>
+                  <td>2m 45s</td>
+                  <td><span class="status-badge status-pending">41.8%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="cust-name">/docs/quickstart</span></td>
+                  <td><strong>48,930</strong></td>
+                  <td>22,800</td>
+                  <td>5m 30s</td>
+                  <td><span class="status-badge status-completed">21.5%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="cust-name">/blog/ai-trends</span></td>
+                  <td><strong>38,190</strong></td>
+                  <td>19,400</td>
+                  <td>3m 18s</td>
+                  <td><span class="status-badge status-completed">32.6%</span></td>
+                </tr>
+                <tr>
+                  <td><span class="cust-name">/features/auth</span></td>
+                  <td><strong>24,810</strong></td>
+                  <td>12,650</td>
+                  <td>1m 55s</td>
+                  <td><span class="status-badge status-processing">51.2%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Audience by Location -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Audience by Location</h3>
+            <span class="badge badge-green">Top 6</span>
+          </div>
+          <div class="country-list">
+            <div class="country-item">
+              <span class="country-flag">🇺🇸</span>
+              <span class="country-name">United States</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 42.4%;"></div>
+              </div>
+              <span class="country-percent">42.4%</span>
+            </div>
+            <div class="country-item">
+              <span class="country-flag">🇩🇪</span>
+              <span class="country-name">Germany</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 15.8%; background: var(--blue);"></div>
+              </div>
+              <span class="country-percent">15.8%</span>
+            </div>
+            <div class="country-item">
+              <span class="country-flag">🇬🇧</span>
+              <span class="country-name">United Kingdom</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 12.2%; background: var(--green);"></div>
+              </div>
+              <span class="country-percent">12.2%</span>
+            </div>
+            <div class="country-item">
+              <span class="country-flag">🇯🇵</span>
+              <span class="country-name">Japan</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 9.4%; background: var(--orange);"></div>
+              </div>
+              <span class="country-percent">9.4%</span>
+            </div>
+            <div class="country-item">
+              <span class="country-flag">🇮🇳</span>
+              <span class="country-name">India</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 8.1%; background: #c084fc;"></div>
+              </div>
+              <span class="country-percent">8.1%</span>
+            </div>
+            <div class="country-item">
+              <span class="country-flag">🇨🇦</span>
+              <span class="country-name">Canada</span>
+              <div class="country-bar-wrap">
+                <div class="country-bar-fill" style="width: 6.2%; background: var(--red);"></div>
+              </div>
+              <span class="country-percent">6.2%</span>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="assets/js/analytics.js"></script>
+</body>
+</html>

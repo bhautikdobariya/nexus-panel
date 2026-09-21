@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Messages and Live Chat Inbox for customer support, VIP buyers, and order inquiry management." />
+  <title>NexusPanel – Messages &amp; Chat</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item active" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search conversations, customers..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList">
+              <li class="notif-item unread">
+                <div class="notif-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="notif-content">
+                  <p class="notif-title">New message from Sophie Turner</p>
+                  <span class="notif-time">2m ago</span>
+                </div>
+              </li>
+              <li class="notif-item unread">
+                <div class="notif-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div class="notif-content">
+                  <p class="notif-title">New order #NX-9942 placed</p>
+                  <span class="notif-time">15m ago</span>
+                </div>
+              </li>
+            </ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & ACTIONS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Inbox &amp; Messages</h1>
+          <p class="page-subtitle">Communicate in real-time with customers, wholesale buyers, and internal support.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="markAllMessagesReadBtn">
+            <i class="fa-solid fa-check-double"></i>
+            <span>Mark All Read</span>
+          </button>
+          <button class="btn btn-primary" id="composeMessageBtn">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Compose Message</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- CHAT WORKSPACE (3-PANEL INTERFACE) -->
+      <div class="chat-wrapper" id="chatWrapper">
+
+        <!-- PANEL 1: CONVERSATIONS SIDEBAR -->
+        <aside class="chat-sidebar" id="chatSidebar">
+          <div class="chat-sidebar-header">
+            <div class="chat-sidebar-title-row">
+              <div class="chat-sidebar-title">
+                <span>Conversations</span>
+                <span class="badge badge-green" id="activeInboxBadge">3 Unread</span>
+              </div>
+            </div>
+
+            <!-- Search Field -->
+            <div class="chat-search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" class="chat-search-input" id="chatSearchInput" placeholder="Search chats or clients..." />
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="chat-filter-tabs">
+              <button class="chat-filter-btn active" data-filter="all">All</button>
+              <button class="chat-filter-btn" data-filter="unread">Unread</button>
+              <button class="chat-filter-btn" data-filter="vip">VIP</button>
+              <button class="chat-filter-btn" data-filter="support">Support</button>
+            </div>
+          </div>
+
+          <!-- Dynamic Conversation List -->
+          <div class="chat-conv-list" id="chatConvList">
+            <!-- Rendered by messages.js -->
+          </div>
+        </aside>
+
+        <!-- PANEL 2: MAIN CHAT MESSAGES STREAM -->
+        <section class="chat-main" id="chatMain">
+
+          <!-- Header -->
+          <div class="chat-main-header">
+            <div class="chat-header-user">
+              <!-- Mobile Back Button -->
+              <button class="chat-back-btn" id="backToConversationsBtn" aria-label="Back to conversations">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+
+              <div class="chat-header-avatar-wrap">
+                <img src="" alt="Active Contact" class="chat-header-avatar" id="chatHeaderAvatar" />
+              </div>
+
+              <div class="chat-header-details">
+                <div class="chat-header-name" id="chatHeaderName">Loading...</div>
+                <div class="chat-header-status" id="chatHeaderStatus">
+                  <i class="fa-solid fa-circle" style="font-size: 8px;"></i>
+                  <span>Active now</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="chat-header-actions">
+              <button class="icon-btn" title="Audio Call"><i class="fa-solid fa-phone"></i></button>
+              <button class="icon-btn" title="Video Call"><i class="fa-solid fa-video"></i></button>
+              <button class="icon-btn" id="toggleChatInfoBtn" title="Toggle Details Panel"><i class="fa-solid fa-circle-info"></i></button>
+            </div>
+          </div>
+
+          <!-- Messages Stream -->
+          <div class="chat-messages-stream" id="chatMessagesStream">
+            <!-- Rendered by messages.js -->
+          </div>
+
+          <!-- Typing Indicator -->
+          <div class="chat-typing-indicator" id="chatTypingIndicator">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+
+          <!-- Input Bar -->
+          <div class="chat-input-bar">
+            <div class="chat-input-actions">
+              <button class="icon-btn" title="Attach File" style="font-size: 15px;"><i class="fa-solid fa-paperclip"></i></button>
+              <button class="icon-btn" title="Add Emoji" style="font-size: 15px;"><i class="fa-regular fa-face-smile"></i></button>
+            </div>
+
+            <input type="text" class="chat-input-field" id="chatMessageInput" placeholder="Type a message... (Press Enter to send)" autocomplete="off" />
+
+            <button class="chat-send-btn" id="sendMessageBtn" aria-label="Send message">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- PANEL 3: CONTACT INFORMATION DRAWER -->
+        <aside class="chat-info-panel" id="chatInfoPanel">
+          <div class="chat-info-header">
+            <img src="" alt="Contact Info Avatar" class="chat-info-avatar" id="chatInfoAvatar" />
+            <h3 class="chat-info-name" id="chatInfoName">Sophie Turner</h3>
+            <span class="badge badge-purple" id="chatInfoRole">VIP Member</span>
+          </div>
+
+          <div class="chat-info-body">
+            <!-- Contact Info -->
+            <div class="chat-info-section">
+              <span class="chat-info-section-title">Contact Information</span>
+              <div class="chat-info-contact-list">
+                <div class="chat-info-contact-item">
+                  <i class="fa-solid fa-envelope"></i>
+                  <span id="chatInfoEmail">sophie.t@example.com</span>
+                </div>
+                <div class="chat-info-contact-item">
+                  <i class="fa-solid fa-phone"></i>
+                  <span id="chatInfoPhone">+1 (555) 234-8901</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Customer Stats -->
+            <div class="chat-info-section">
+              <span class="chat-info-section-title">Customer Snapshot</span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                <div style="background: var(--bg-surface); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                  <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">TOTAL SPEND</div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin-top: 2px;" id="chatInfoSpend">$6,420.00</div>
+                </div>
+                <div style="background: var(--bg-surface); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                  <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 600;">ORDERS</div>
+                  <div style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin-top: 2px;" id="chatInfoOrders">24</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Shared Files -->
+            <div class="chat-info-section">
+              <span class="chat-info-section-title">Shared Media &amp; Files</span>
+              <div class="chat-shared-files-list" id="chatInfoFilesList">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="chat-info-section" style="margin-top: 6px;">
+              <a href="customers.html" class="btn btn-outline" style="width: 100%; justify-content: center; font-size: 12.5px;">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>View Full CRM Profile</span>
+              </a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+
+    <!-- ========== COMPOSE NEW CHAT MODAL ========== -->
+    <div class="modal-backdrop" id="composeModal" role="dialog" aria-modal="true" aria-labelledby="composeModalTitle">
+      <div class="modal-box" style="max-width: 500px;">
+        <div class="modal-header">
+          <h3 class="modal-title" id="composeModalTitle">
+            <i class="fa-solid fa-paper-plane" style="color: var(--accent); margin-right: 8px;"></i>
+            Compose Message
+          </h3>
+          <button class="modal-close" id="closeComposeModalBtn" aria-label="Close Modal">&times;</button>
+        </div>
+
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label" for="composeRecipient">Recipient / Customer Name <span class="req">*</span></label>
+            <input type="text" class="form-input" id="composeRecipient" placeholder="e.g. Liam Foster or Enterprise client" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="composeInitialMessage">Message <span class="req">*</span></label>
+            <textarea class="form-textarea" id="composeInitialMessage" rows="4" placeholder="Type your initial message to start the conversation..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelComposeBtn">Cancel</button>
+          <button type="button" class="btn btn-primary" id="sendNewChatBtn">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Start Conversation</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/messages.js"></script>
+</body>
+</html>

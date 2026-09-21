@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – A modern, premium admin dashboard template built with HTML, CSS, and JavaScript." />
+  <title>NexusPanel – Admin Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item active" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search anything..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">5 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Dashboard Overview</h1>
+          <p class="page-subtitle">Welcome back, Alex! Here's what's happening today.</p>
+        </div>
+        <button class="btn btn-primary" id="newReportBtn">
+          <i class="fa-solid fa-plus"></i> New Report
+        </button>
+      </section>
+
+      <!-- STAT CARDS -->
+      <section class="stats-grid" aria-label="Key Metrics">
+        <div class="stat-card" id="statRevenue">
+          <div class="stat-icon icon-purple"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Revenue</p>
+            <h2 class="stat-value" data-target="84320">$0</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +12.5% vs last month</p>
+          </div>
+        </div>
+        <div class="stat-card" id="statOrders">
+          <div class="stat-icon icon-blue"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Orders</p>
+            <h2 class="stat-value" data-target="3248">0</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +8.3% vs last month</p>
+          </div>
+        </div>
+        <div class="stat-card" id="statUsers">
+          <div class="stat-icon icon-green"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Active Users</p>
+            <h2 class="stat-value" data-target="18740">0</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +21.7% vs last month</p>
+          </div>
+        </div>
+        <div class="stat-card" id="statConversion">
+          <div class="stat-icon icon-orange"><i class="fa-solid fa-percent"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Conversion Rate</p>
+            <h2 class="stat-value" data-target="68">0%</h2>
+            <p class="stat-change negative"><i class="fa-solid fa-arrow-trend-down"></i> -2.1% vs last month</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHARTS ROW -->
+      <section class="charts-row">
+        <!-- Revenue Chart -->
+        <div class="card chart-card" id="revenueChartCard">
+          <div class="card-header">
+            <h3 class="card-title">Revenue Overview</h3>
+            <div class="chart-tabs">
+              <button class="chart-tab active" data-period="weekly" id="tabWeekly">Weekly</button>
+              <button class="chart-tab" data-period="monthly" id="tabMonthly">Monthly</button>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="card chart-card chart-card-sm" id="trafficChartCard">
+          <div class="card-header">
+            <h3 class="card-title">Traffic Sources</h3>
+          </div>
+          <div class="chart-wrap-donut">
+            <canvas id="trafficChart"></canvas>
+          </div>
+          <div class="chart-legend" id="trafficLegend"></div>
+        </div>
+      </section>
+
+      <!-- TABLE + ACTIVITY ROW -->
+      <section class="bottom-row">
+        <!-- Recent Orders Table -->
+        <div class="card table-card" id="ordersCard">
+          <div class="card-header">
+            <h3 class="card-title">Recent Orders</h3>
+            <a href="orders.html" class="link-btn">View All <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="ordersTable">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="card activity-card" id="activityCard">
+          <div class="card-header">
+            <h3 class="card-title">Activity Feed</h3>
+          </div>
+          <ul class="activity-list" id="activityList">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

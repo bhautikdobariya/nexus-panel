@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Customers & Leads CRM dashboard for tracking customer profiles, lifetime value, segmentation, and orders history." />
+  <title>NexusPanel – Customers &amp; Leads</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item active" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search customers, companies, emails..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & ACTIONS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Customers &amp; Leads</h1>
+          <p class="page-subtitle">Manage customer profiles, lifetime value, acquisition status, and segment activity.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="exportAllCustomersBtn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export Contacts
+          </button>
+          <button class="btn btn-primary" id="openAddCustomerBtn">
+            <i class="fa-solid fa-user-plus"></i> Add Customer
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI METRIC CARDS -->
+      <section class="stats-grid" aria-label="Customer Overview Metrics">
+        
+        <!-- Total Customers -->
+        <div class="stat-card">
+          <div class="stat-icon icon-green"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Customers</p>
+            <h2 class="stat-value">18,740</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +21.7% vs last month</p>
+          </div>
+        </div>
+
+        <!-- Active Customers -->
+        <div class="stat-card">
+          <div class="stat-icon icon-purple"><i class="fa-solid fa-user-check"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Active Paying</p>
+            <h2 class="stat-value">14,210</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-check"></i> 75.8% 30-day activity rate</p>
+          </div>
+        </div>
+
+        <!-- New Leads -->
+        <div class="stat-card">
+          <div class="stat-icon icon-blue"><i class="fa-solid fa-user-plus"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">New Leads this Month</p>
+            <h2 class="stat-value">1,248</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +12.4% conversion rate</p>
+          </div>
+        </div>
+
+        <!-- Average LTV -->
+        <div class="stat-card">
+          <div class="stat-icon icon-orange"><i class="fa-solid fa-gem"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Average LTV</p>
+            <h2 class="stat-value">$1,420</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +$180 vs last quarter</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CUSTOMERS CONTROL CARD (SEGMENT TABS + TOOLBAR) -->
+      <section class="order-tabs-card">
+        
+        <!-- Segment Filter Tabs -->
+        <div class="order-tabs-nav">
+          <button class="order-tab-btn active" data-segment="all">
+            All Customers <span class="tab-count">18,740</span>
+          </button>
+          <button class="order-tab-btn" data-segment="vip">
+            VIP &amp; Enterprise <span class="tab-count">1,420</span>
+          </button>
+          <button class="order-tab-btn" data-segment="active">
+            Active Paying <span class="tab-count">12,790</span>
+          </button>
+          <button class="order-tab-btn" data-segment="trial">
+            Free / Trial <span class="tab-count">3,840</span>
+          </button>
+          <button class="order-tab-btn" data-segment="churn">
+            Churn Risk <span class="tab-count">690</span>
+          </button>
+        </div>
+
+        <!-- Toolbar: Search & Filters -->
+        <div class="orders-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchCustomersInput" placeholder="Filter by customer name, email, company, or country..." />
+          </div>
+
+          <div class="toolbar-filters">
+            <!-- Status Dropdown -->
+            <select class="filter-select" id="statusFilterSelect" aria-label="Status Filter">
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="lead">Lead</option>
+              <option value="inactive">Inactive</option>
+              <option value="churned">Churned</option>
+            </select>
+
+            <!-- Sort By Dropdown -->
+            <select class="filter-select" id="sortCustomersSelect" aria-label="Sort Customers">
+              <option value="ltv-desc">Highest LTV ($)</option>
+              <option value="orders-desc">Most Orders</option>
+              <option value="newest">Newest Added</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Customers Table -->
+        <div class="table-responsive">
+          <table class="data-table" style="min-width: 900px;">
+            <thead>
+              <tr>
+                <th style="width: 40px;">
+                  <input type="checkbox" class="order-check" id="selectAllCustomers" aria-label="Select all customers" />
+                </th>
+                <th>Customer</th>
+                <th>Company &amp; Role</th>
+                <th>Location</th>
+                <th>Orders</th>
+                <th>Total Spent (LTV)</th>
+                <th>Tier</th>
+                <th>Status</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customersTableBody">
+              <!-- Rendered dynamically by customers.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-wrap">
+          <span class="pagination-info">Showing 1 to 8 of 18,740 customers</span>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled aria-label="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="padding: 0 4px; color: var(--text-muted);">...</span>
+            <button class="page-btn">24</button>
+            <button class="page-btn" aria-label="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Floating Bulk Actions Bar -->
+  <div class="bulk-actions-bar" id="bulkActionsBar">
+    <span class="bulk-count-badge" id="bulkCountBadge">0 customers selected</span>
+    <div class="bulk-btns">
+      <button class="btn btn-sm btn-primary" id="bulkTierBtn"><i class="fa-solid fa-crown"></i> Set VIP Tier</button>
+      <button class="btn btn-sm btn-outline" id="bulkEmailBtn"><i class="fa-solid fa-envelope"></i> Send Email</button>
+      <button class="btn btn-sm btn-outline" id="bulkDeleteBtn" style="color: var(--red);"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+    <i class="fa-solid fa-xmark btn-deselect" id="deselectAllBtn" title="Deselect all"></i>
+  </div>
+
+  <!-- Customer Profile Details Modal / Drawer -->
+  <div class="order-modal-backdrop" id="customerProfileModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="profileHeroName">
+    <div class="order-modal" style="max-width: 680px;">
+      <div class="order-modal-header">
+        <div class="modal-title-wrap">
+          <h3 class="modal-order-id">Customer 360° Profile</h3>
+        </div>
+        <button class="modal-close-btn" id="modalCloseProfileBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="order-modal-body">
+        
+        <!-- Hero Box -->
+        <div class="cust-profile-hero">
+          <div class="cust-hero-left">
+            <div class="cust-hero-avatar-wrap">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80" alt="Customer Avatar" class="cust-hero-avatar" id="profileHeroAvatar" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Customer&background=7c6ff7&color=fff&rounded=true';" />
+              <span class="cust-hero-dot" id="profileOnlineDot"></span>
+            </div>
+            <div class="cust-hero-meta">
+              <h2 class="cust-hero-name" id="profileHeroName">Sophie Turner</h2>
+              <p class="cust-hero-sub" id="profileHeroRole">CTO at Stark Enterprises</p>
+            </div>
+          </div>
+          <button class="btn btn-outline" id="modalSendEmailBtn" style="white-space: nowrap;">
+            <i class="fa-solid fa-envelope"></i> Send Email
+          </button>
+        </div>
+
+        <!-- 4-Stat Pills Grid -->
+        <div class="cust-stats-row">
+          <div class="cust-stat-box">
+            <span class="cust-stat-label">Total Spent</span>
+            <span class="cust-stat-val" id="profileSpent" style="color: var(--accent-light);">$4,210.00</span>
+          </div>
+          <div class="cust-stat-box">
+            <span class="cust-stat-label">Orders</span>
+            <span class="cust-stat-val" id="profileOrders">14</span>
+          </div>
+          <div class="cust-stat-box">
+            <span class="cust-stat-label">Avg Order</span>
+            <span class="cust-stat-val" id="profileAov">$300.71</span>
+          </div>
+          <div class="cust-stat-box">
+            <span class="cust-stat-label">Member Since</span>
+            <span class="cust-stat-val" id="profileMemberSince" style="font-size: 13px;">Jan 2024</span>
+          </div>
+        </div>
+
+        <!-- Contact & Location Card -->
+        <div class="profile-section-card">
+          <span class="modal-section-title" style="margin: 0;">Contact &amp; Location Details</span>
+          <div class="contact-details-grid">
+            <div class="contact-item">
+              <i class="fa-solid fa-envelope"></i>
+              <span>Email: <strong id="profileEmail">sophie.t@example.com</strong></span>
+            </div>
+            <div class="contact-item">
+              <i class="fa-solid fa-phone"></i>
+              <span>Phone: <strong id="profilePhone">+1 (555) 234-5678</strong></span>
+            </div>
+            <div class="contact-item">
+              <i class="fa-solid fa-location-dot"></i>
+              <span>City: <strong id="profileCity">🇺🇸 San Francisco, CA, US</strong></span>
+            </div>
+            <div class="contact-item">
+              <i class="fa-solid fa-clock"></i>
+              <span>Timezone: <strong id="profileTimezone">PST (UTC-8)</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div>
+          <div class="modal-section-title">Recent Order History</div>
+          <div class="table-responsive">
+            <table class="modal-items-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="profileOrdersTbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Customer Activity Log -->
+        <div>
+          <div class="modal-section-title">Recent Activity Log</div>
+          <div class="cust-activity-list" id="profileActivityList">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+      <div class="order-modal-footer">
+        <button class="btn btn-outline" id="modalCloseProfileFooterBtn">
+          Close Profile
+        </button>
+        <button class="btn btn-primary" onclick="showToast('Edit customer profile dialog opening...', 'info');">
+          <i class="fa-solid fa-pen-to-square"></i> Edit Customer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Customer Modal -->
+  <div class="order-modal-backdrop" id="addCustomerModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="addCustTitle">
+    <div class="order-modal">
+      <div class="order-modal-header">
+        <div class="modal-title-wrap">
+          <h3 class="modal-order-id" id="addCustTitle">Add New Customer</h3>
+        </div>
+        <button class="modal-close-btn" id="modalCloseAddBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="addCustomerForm">
+        <div class="order-modal-body">
+          
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="req">*</span></label>
+              <input type="text" class="form-input" id="custNameInput" placeholder="e.g. Eleanor Vance" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address <span class="req">*</span></label>
+              <input type="email" class="form-input" id="custEmailInput" placeholder="e.g. eleanor@vance.io" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-input" id="custPhoneInput" placeholder="+1 (555) 123-4567" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Company Name</label>
+              <input type="text" class="form-input" id="custCompanyInput" placeholder="e.g. Vance Tech" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Job Title / Role</label>
+              <input type="text" class="form-input" id="custRoleInput" placeholder="e.g. VP of Product" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tier / Segment</label>
+              <select class="form-input" id="custTierSelect">
+                <option value="pro">Pro Member</option>
+                <option value="vip">VIP Elite</option>
+                <option value="enterprise">Enterprise</option>
+                <option value="trial">Free Trial</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Country / Location</label>
+              <input type="text" class="form-input" id="custCountryInput" placeholder="e.g. United States" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Initial Status</label>
+              <select class="form-input" id="custStatusSelect">
+                <option value="active">Active</option>
+                <option value="lead">Lead</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="order-modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelCustomerBtn">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Create Customer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="assets/js/customers.js"></script>
+</body>
+</html>

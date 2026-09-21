@@ -1,0 +1,22 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+
+# Editor & IDE Directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node & Package Caches (if added in future)
+node_modules/
+package-lock.json
+yarn.lock
+npm-debug.log*
+
+# Production Build / Logs
+dist/
+build/
+*.log

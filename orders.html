@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Orders Management dashboard for tracking customer orders, payments, fulfillment, and invoices." />
+  <title>NexusPanel – Orders Management</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item active" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search orders, customers, invoices..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList"></ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & ACTIONS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Orders Management</h1>
+          <p class="page-subtitle">Track, fulfill, and manage your customer orders &amp; transactions.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="exportAllOrdersBtn">
+            <i class="fa-solid fa-file-arrow-down"></i> Export Orders
+          </button>
+          <button class="btn btn-primary" id="newOrderBtn">
+            <i class="fa-solid fa-plus"></i> Create Order
+          </button>
+        </div>
+      </section>
+
+      <!-- KPI METRIC CARDS -->
+      <section class="stats-grid" aria-label="Orders Overview Metrics">
+        
+        <!-- Total Orders -->
+        <div class="stat-card">
+          <div class="stat-icon icon-blue"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Orders</p>
+            <h2 class="stat-value">3,248</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +8.3% vs last month</p>
+          </div>
+        </div>
+
+        <!-- Completed Orders -->
+        <div class="stat-card">
+          <div class="stat-icon icon-green"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Completed Orders</p>
+            <h2 class="stat-value">2,890</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-check"></i> 88.9% fulfillment rate</p>
+          </div>
+        </div>
+
+        <!-- Pending Orders -->
+        <div class="stat-card">
+          <div class="stat-icon icon-orange"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Pending / Processing</p>
+            <h2 class="stat-value">248</h2>
+            <p class="stat-change negative"><i class="fa-solid fa-triangle-exclamation"></i> 32 require attention</p>
+          </div>
+        </div>
+
+        <!-- Total Order Revenue -->
+        <div class="stat-card">
+          <div class="stat-icon icon-purple"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="stat-body">
+            <p class="stat-label">Total Revenue</p>
+            <h2 class="stat-value">$148,920</h2>
+            <p class="stat-change positive"><i class="fa-solid fa-arrow-trend-up"></i> +12.5% vs last month</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ORDERS TABS & TABLE CARD -->
+      <section class="order-tabs-card">
+        
+        <!-- Status Filter Tabs -->
+        <div class="order-tabs-nav">
+          <button class="order-tab-btn active" data-tab="all">
+            All Orders <span class="tab-count">3,248</span>
+          </button>
+          <button class="order-tab-btn" data-tab="completed">
+            Completed <span class="tab-count">2,890</span>
+          </button>
+          <button class="order-tab-btn" data-tab="processing">
+            Processing <span class="tab-count">186</span>
+          </button>
+          <button class="order-tab-btn" data-tab="pending">
+            Pending <span class="tab-count">62</span>
+          </button>
+          <button class="order-tab-btn" data-tab="cancelled">
+            Cancelled <span class="tab-count">110</span>
+          </button>
+        </div>
+
+        <!-- Orders Toolbar (Search & Dropdowns) -->
+        <div class="orders-toolbar">
+          <div class="toolbar-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchOrdersInput" placeholder="Filter by ID, customer name, email, or product..." />
+          </div>
+
+          <div class="toolbar-filters">
+            <select class="filter-select" id="paymentFilterSelect" aria-label="Payment Status Filter">
+              <option value="all">All Payments</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="refunded">Refunded</option>
+            </select>
+
+            <select class="filter-select" aria-label="Date Range Filter">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="table-responsive">
+          <table class="data-table" style="min-width: 820px;">
+            <thead>
+              <tr>
+                <th style="width: 40px;">
+                  <input type="checkbox" class="order-check" id="selectAllOrders" aria-label="Select all orders" />
+                </th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Products Summary</th>
+                <th>Payment</th>
+                <th>Total</th>
+                <th>Fulfillment</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Rendered dynamically by orders.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-wrap">
+          <span class="pagination-info">Showing 1 to 8 of 3,248 orders</span>
+          <div class="pagination-pages">
+            <button class="page-btn" disabled aria-label="Previous Page"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span style="padding: 0 4px; color: var(--text-muted);">...</span>
+            <button class="page-btn">12</button>
+            <button class="page-btn" aria-label="Next Page"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Floating Bulk Actions Bar -->
+  <div class="bulk-actions-bar" id="bulkActionsBar">
+    <span class="bulk-count-badge" id="bulkCountBadge">0 orders selected</span>
+    <div class="bulk-btns">
+      <button class="btn btn-sm btn-primary" id="bulkCompleteBtn"><i class="fa-solid fa-check"></i> Mark Completed</button>
+      <button class="btn btn-sm btn-outline" id="bulkExportBtn"><i class="fa-solid fa-download"></i> Export</button>
+      <button class="btn btn-sm btn-outline" id="bulkDeleteBtn" style="color: var(--red);"><i class="fa-solid fa-trash"></i> Delete</button>
+    </div>
+    <i class="fa-solid fa-xmark btn-deselect" id="deselectAllBtn" title="Deselect all"></i>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="order-modal-backdrop" id="orderModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalOrderId">
+    <div class="order-modal">
+      <div class="order-modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-order-id" id="modalOrderId">#ORD-0192</span>
+          <div id="modalFulfillmentBadge"></div>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="order-modal-body">
+        <!-- Summary Grid -->
+        <div class="modal-summary-grid">
+          <div class="modal-summary-item">
+            <span class="summary-label">Customer</span>
+            <span class="summary-val" id="modalCustName">
+              <span style="display:inline-flex; align-items:center; gap:8px;">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80" alt="Sophie Turner" class="cust-avatar-sm" style="width:24px; height:24px; min-width:24px; min-height:24px;" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=Sophie+Turner&background=7c6ff7&color=fff&rounded=true';" />
+                <span>Sophie Turner</span>
+              </span>
+            </span>
+          </div>
+          <div class="modal-summary-item">
+            <span class="summary-label">Placed On</span>
+            <span class="summary-val" id="modalOrderDate">Sep 19, 2026</span>
+          </div>
+          <div class="modal-summary-item">
+            <span class="summary-label">Payment</span>
+            <span class="summary-val" id="modalPaymentStatus">Paid</span>
+          </div>
+          <div class="modal-summary-item">
+            <span class="summary-label">Grand Total</span>
+            <span class="summary-val" id="modalOrderTotal" style="color: var(--accent-light);">$299.00</span>
+          </div>
+        </div>
+
+        <!-- Fulfillment Timeline Tracker -->
+        <div>
+          <div class="modal-section-title">Order Status Timeline</div>
+          <div class="order-timeline">
+            <div class="timeline-track-bg"></div>
+            <div class="timeline-track-fill" id="modalTimelineTrack" style="width: 100%;"></div>
+
+            <div class="timeline-step completed" id="step1">
+              <div class="timeline-icon"><i class="fa-solid fa-receipt"></i></div>
+              <span class="timeline-label">Placed</span>
+            </div>
+
+            <div class="timeline-step completed" id="step2">
+              <div class="timeline-icon"><i class="fa-solid fa-credit-card"></i></div>
+              <span class="timeline-label">Paid</span>
+            </div>
+
+            <div class="timeline-step completed" id="step3">
+              <div class="timeline-icon"><i class="fa-solid fa-gears"></i></div>
+              <span class="timeline-label">Processing</span>
+            </div>
+
+            <div class="timeline-step completed" id="step4">
+              <div class="timeline-icon"><i class="fa-solid fa-truck"></i></div>
+              <span class="timeline-label">Dispatched</span>
+            </div>
+
+            <div class="timeline-step completed" id="step5">
+              <div class="timeline-icon"><i class="fa-solid fa-box-open"></i></div>
+              <span class="timeline-label">Delivered</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div>
+          <div class="modal-section-title">Ordered Items</div>
+          <table class="modal-items-table">
+            <thead>
+              <tr>
+                <th>Item / License</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="modalItemsTbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pricing Totals -->
+        <div class="modal-totals">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span id="modalSubtotal">$299.00</span>
+          </div>
+          <div class="total-row">
+            <span>Estimated Tax</span>
+            <span>$0.00</span>
+          </div>
+          <div class="total-row grand-total">
+            <span>Grand Total</span>
+            <span id="modalGrandTotal" style="color: var(--accent-light);">$299.00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="order-modal-footer">
+        <div style="display: flex; gap: 8px; margin-right: auto;">
+          <button class="btn btn-outline" id="printInvoiceModalBtn">
+            <i class="fa-solid fa-print"></i> Print Invoice
+          </button>
+          <button class="btn btn-outline" id="resendReceiptBtn">
+            <i class="fa-solid fa-envelope"></i> Resend Receipt
+          </button>
+        </div>
+        <button class="btn btn-primary" id="modalCloseFooterBtn">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="assets/js/orders.js"></script>
+</body>
+</html>

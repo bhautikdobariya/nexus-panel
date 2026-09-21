@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NexusPanel – Settings and system preferences configuration for store operations, admin profile, security, and integrations." />
+  <title>NexusPanel – Settings &amp; Preferences</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg" />
+  <!-- Instant Theme & Layout Preload (Zero FOUC) -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.add('light-mode');
+        }
+        if (window.innerWidth > 900 && localStorage.getItem('sidebarCollapsed') === 'true') {
+          document.documentElement.classList.add('sidebar-collapsed');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <script>
+    if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
+    if (document.documentElement.classList.contains('sidebar-collapsed')) document.body.classList.add('sidebar-collapsed');
+  </script>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Main</p>
+      <a href="index.html" class="nav-item" id="nav-dashboard">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="analytics.html" class="nav-item" id="nav-analytics">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Analytics</span>
+      </a>
+      <a href="orders.html" class="nav-item" id="nav-orders">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Orders</span>
+        <span class="badge">12</span>
+      </a>
+      <a href="products.html" class="nav-item" id="nav-products">
+        <i class="fa-solid fa-box"></i>
+        <span>Products</span>
+      </a>
+
+      <p class="nav-label">Users</p>
+      <a href="customers.html" class="nav-item" id="nav-customers">
+        <i class="fa-solid fa-users"></i>
+        <span>Customers</span>
+      </a>
+      <a href="messages.html" class="nav-item" id="nav-messages">
+        <i class="fa-solid fa-envelope"></i>
+        <span>Messages</span>
+        <span class="badge badge-green">3</span>
+      </a>
+
+      <p class="nav-label">System</p>
+      <a href="settings.html" class="nav-item active" id="nav-settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
+      <a href="help.html" class="nav-item" id="nav-help">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Help &amp; Support</span>
+      </a>
+      <a href="login.html" class="nav-item" id="nav-logout">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="settings.html#profile" class="user-profile" style="text-decoration: none; color: inherit;">
+        <img src="assets/images/avatar.png" alt="User Avatar" class="user-avatar" id="userAvatar" />
+        <div class="user-info">
+          <p class="user-name">Alex Johnson</p>
+          <p class="user-role">Super Admin</p>
+        </div>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search settings, keys, preferences..." id="searchInput" />
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+
+        <!-- Notification Button + Popover -->
+        <div class="popover-wrap" id="notifWrap">
+          <button class="icon-btn notification-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-dot" id="notifDot"></span>
+          </button>
+
+          <!-- Notification Popover -->
+          <div class="notif-popover" id="notifPopover" role="dialog" aria-label="Notifications panel">
+            <div class="notif-popover-header">
+              <h4>Notifications</h4>
+              <span class="notif-count-badge" id="notifCountBadge">2 New</span>
+              <button class="mark-all-btn" id="markAllReadBtn">Mark all read</button>
+            </div>
+            <ul class="notif-list" id="notifList">
+              <li class="notif-item unread">
+                <div class="notif-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="notif-content">
+                  <p class="notif-title">New message from Sophie Turner</p>
+                  <span class="notif-time">2m ago</span>
+                </div>
+              </li>
+              <li class="notif-item unread">
+                <div class="notif-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="notif-content">
+                  <p class="notif-title">New login from Chrome macOS</p>
+                  <span class="notif-time">45m ago</span>
+                </div>
+              </li>
+            </ul>
+            <div class="notif-popover-footer">
+              <a href="#" class="view-all-notifs">View all notifications <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Button + Dropdown -->
+        <div class="popover-wrap" id="profileWrap">
+          <button class="topbar-avatar-btn" id="profileBtn" aria-label="Profile menu" aria-expanded="false">
+            <img src="assets/images/avatar.png" alt="User" id="topbarAvatar" />
+            <span class="online-dot"></span>
+          </button>
+
+          <!-- Profile Dropdown -->
+          <div class="profile-dropdown" id="profileDropdown" role="dialog" aria-label="Profile menu">
+            <div class="profile-dropdown-header">
+              <img src="assets/images/avatar.png" alt="Alex Johnson" class="pd-avatar" />
+              <div class="pd-info">
+                <p class="pd-name">Alex Johnson</p>
+                <p class="pd-role">Super Admin</p>
+                <span class="pd-status"><span class="online-dot-sm"></span> Online</span>
+              </div>
+            </div>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="settings.html#profile" class="pd-item" id="pdProfile"><span class="pd-icon"><i class="fa-solid fa-user"></i></span> My Profile</a></li>
+              <li><a href="settings.html#security" class="pd-item" id="pdAccount"><span class="pd-icon"><i class="fa-solid fa-id-badge"></i></span> Account</a></li>
+              <li><a href="settings.html" class="pd-item" id="pdSettings"><span class="pd-icon"><i class="fa-solid fa-gear"></i></span> Settings</a></li>
+              <li><a href="settings.html#billing" class="pd-item" id="pdBilling"><span class="pd-icon"><i class="fa-solid fa-credit-card"></i></span> Billing</a></li>
+            </ul>
+            <div class="pd-divider"></div>
+            <ul class="pd-menu">
+              <li><a href="help.html" class="pd-item" id="pdHelp"><span class="pd-icon"><i class="fa-solid fa-circle-question"></i></span> Help &amp; Support</a></li>
+              <li><a href="login.html" class="pd-item pd-item-danger" id="pdLogout"><span class="pd-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span> Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main class="page-content">
+
+      <!-- PAGE TITLE & ACTIONS -->
+      <section class="page-title-section">
+        <div>
+          <h1 class="page-title">Settings &amp; Preferences</h1>
+          <p class="page-subtitle">Configure store operations, team profile, security, and third-party integrations.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" id="globalResetBtn">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Reset Defaults</span>
+          </button>
+          <button class="btn btn-primary" id="globalSaveBtn">
+            <i class="fa-solid fa-check"></i>
+            <span>Save Changes</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- SETTINGS LAYOUT (2-COLUMN) -->
+      <div class="settings-layout">
+
+        <!-- NAVIGATION TABS -->
+        <nav class="settings-nav" aria-label="Settings Categories">
+          <button class="settings-nav-item active" data-tab="general">
+            <i class="fa-solid fa-sliders"></i>
+            <span>General</span>
+          </button>
+          <button class="settings-nav-item" data-tab="profile">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>Profile &amp; Account</span>
+          </button>
+          <button class="settings-nav-item" data-tab="notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span>Notifications</span>
+            <span class="settings-nav-badge badge badge-green">New</span>
+          </button>
+          <button class="settings-nav-item" data-tab="security">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Security &amp; Auth</span>
+          </button>
+          <button class="settings-nav-item" data-tab="billing">
+            <i class="fa-solid fa-credit-card"></i>
+            <span>Billing &amp; Plans</span>
+            <span class="settings-nav-badge badge badge-purple">Pro</span>
+          </button>
+          <button class="settings-nav-item" data-tab="integrations">
+            <i class="fa-solid fa-plug"></i>
+            <span>Integrations &amp; API</span>
+          </button>
+        </nav>
+
+        <!-- CONTENT PANELS -->
+        <div class="settings-content">
+
+          <!-- ================= TAB 1: GENERAL ================= -->
+          <div class="settings-tab-panel active" id="tab-general">
+            
+            <!-- Store Profile Details -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Store &amp; Business Profile</h2>
+                  <p class="settings-card-desc">Basic storefront details used in customer invoices, emails, and store metadata.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Storefront Name <span class="req">*</span></label>
+                    <input type="text" class="form-input" value="Nexus Commerce Direct" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Public Contact Email <span class="req">*</span></label>
+                    <input type="email" class="form-input" value="support@nexuspanel.io" />
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Phone Support Number</label>
+                    <input type="tel" class="form-input" value="+1 (800) 555-0199" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Store Currency</label>
+                    <select class="form-input">
+                      <option value="usd" selected>USD ($) - US Dollar</option>
+                      <option value="eur">EUR (€) - Euro</option>
+                      <option value="gbp">GBP (£) - British Pound</option>
+                      <option value="jpy">JPY (¥) - Japanese Yen</option>
+                      <option value="cad">CAD ($) - Canadian Dollar</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Timezone</label>
+                    <select class="form-input">
+                      <option value="est" selected>(UTC-05:00) Eastern Time (US &amp; Canada)</option>
+                      <option value="pst">(UTC-08:00) Pacific Time (US &amp; Canada)</option>
+                      <option value="utc">(UTC+00:00) Universal Coordinated Time (London)</option>
+                      <option value="cet">(UTC+01:00) Central European Time (Berlin)</option>
+                      <option value="jst">(UTC+09:00) Tokyo Time</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Default Language</label>
+                    <select class="form-input">
+                      <option value="en" selected>English (United States)</option>
+                      <option value="es">Español (Spanish)</option>
+                      <option value="fr">Français (French)</option>
+                      <option value="de">Deutsch (German)</option>
+                      <option value="ja">日本語 (Japanese)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="button" class="btn btn-primary save-settings-btn">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- Operations & Preferences -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Store Operations</h2>
+                  <p class="settings-card-desc">Control automated order processing and storefront maintenance.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="switch-list">
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Maintenance Mode</span>
+                      <span class="switch-desc">Temporarily take storefront offline for public visitors while keeping admin dashboard accessible.</span>
+                    </div>
+                    <label class="switch" aria-label="Maintenance Mode toggle">
+                      <input type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Guest Checkout</span>
+                      <span class="switch-desc">Allow customers to complete purchases without creating an account first.</span>
+                    </div>
+                    <label class="switch" aria-label="Guest Checkout toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Automatic Inventory Depletion</span>
+                      <span class="switch-desc">Instantly deduct product stock counts upon successful order payment completion.</span>
+                    </div>
+                    <label class="switch" aria-label="Automatic Inventory toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= TAB 2: PROFILE & ACCOUNT ================= -->
+          <div class="settings-tab-panel" id="tab-profile">
+
+            <!-- Personal Profile Details -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Admin Profile</h2>
+                  <p class="settings-card-desc">Manage your personal credentials, avatar, and system role.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <!-- Avatar row -->
+                <div class="profile-photo-row">
+                  <img src="assets/images/avatar.png" alt="Profile Preview" class="profile-photo-preview" id="profileAvatarPreview" />
+                  <div class="profile-photo-actions">
+                    <input type="file" id="avatarUploadInput" accept="image/*" style="display: none;" />
+                    <button type="button" class="btn btn-outline" id="uploadAvatarBtn">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                    <button type="button" class="btn btn-outline" id="removeAvatarBtn" style="color: var(--red);">
+                      <i class="fa-solid fa-trash-can"></i> Remove
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-grid-2" style="margin-top: 6px;">
+                  <div class="form-group">
+                    <label class="form-label">First Name <span class="req">*</span></label>
+                    <input type="text" class="form-input" value="Alex" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Last Name <span class="req">*</span></label>
+                    <input type="text" class="form-input" value="Johnson" />
+                  </div>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">Work Email <span class="req">*</span></label>
+                    <input type="email" class="form-input" value="alex.johnson@nexuspanel.io" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Role / Permissions</label>
+                    <input type="text" class="form-input" value="Super Admin (Full Access)" disabled style="opacity: 0.7; cursor: not-allowed;" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Bio / Profile Notes</label>
+                  <textarea class="form-textarea" placeholder="Write a short summary about yourself...">Lead Operations Architect and Principal Administrator for Nexus Global E-Commerce Operations.</textarea>
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="button" class="btn btn-primary save-settings-btn">
+                  <i class="fa-solid fa-floppy-disk"></i> Update Profile
+                </button>
+              </div>
+            </div>
+
+            <!-- Password Change Card -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Change Password</h2>
+                  <p class="settings-card-desc">Ensure your account is using a strong, unique password to prevent unauthorized access.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" class="form-input" placeholder="••••••••••••" />
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" class="form-input" id="newPasswordInput" placeholder="Min. 8 characters with numbers &amp; symbols" />
+                    
+                    <!-- Strength meter -->
+                    <div class="password-meter-wrap">
+                      <div class="password-strength-bars">
+                        <div class="password-bar-segment" id="passBar1"></div>
+                        <div class="password-bar-segment" id="passBar2"></div>
+                        <div class="password-bar-segment" id="passBar3"></div>
+                      </div>
+                      <span class="password-strength-label" id="passStrengthLabel">Enter password to check strength</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-input" placeholder="Repeat new password" />
+                  </div>
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="button" class="btn btn-primary save-settings-btn">
+                  <i class="fa-solid fa-key"></i> Update Password
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= TAB 3: NOTIFICATIONS ================= -->
+          <div class="settings-tab-panel" id="tab-notifications">
+
+            <!-- Email Alerts Card -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Email Notifications</h2>
+                  <p class="settings-card-desc">Choose which store events trigger an immediate or summarized email notification.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="switch-list">
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">New Order Placed</span>
+                      <span class="switch-desc">Receive an instant email confirmation when a customer completes a checkout order.</span>
+                    </div>
+                    <label class="switch" aria-label="New Order toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Low Inventory Alerts</span>
+                      <span class="switch-desc">Notify warehouse managers when a SKU drops below 10 units in available stock.</span>
+                    </div>
+                    <label class="switch" aria-label="Low inventory toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">New VIP Customer Registration</span>
+                      <span class="switch-desc">Get notified when a new high-value client or wholesale applicant registers.</span>
+                    </div>
+                    <label class="switch" aria-label="New customer toggle">
+                      <input type="checkbox" />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Refund &amp; Chargeback Requests</span>
+                      <span class="switch-desc">Urgent alert when a dispute or high-ticket refund claim is filed by a customer.</span>
+                    </div>
+                    <label class="switch" aria-label="Refund alerts toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Push & Realtime Alerts -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Push &amp; In-App Notifications</h2>
+                  <p class="settings-card-desc">Desktop push banners and live topbar badge alerts.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="switch-list">
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Browser Desktop Notifications</span>
+                      <span class="switch-desc">Display native desktop banners even when the browser tab is in the background.</span>
+                    </div>
+                    <label class="switch" aria-label="Browser notification toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="switch-row">
+                    <div class="switch-info">
+                      <span class="switch-title">Daily Sales &amp; Revenue Digest</span>
+                      <span class="switch-desc">Automated nightly recap of GMV, top products, and conversion metrics at 00:00 UTC.</span>
+                    </div>
+                    <label class="switch" aria-label="Daily digest toggle">
+                      <input type="checkbox" checked />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="button" class="btn btn-primary save-settings-btn">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Notifications
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= TAB 4: SECURITY & AUTH ================= -->
+          <div class="settings-tab-panel" id="tab-security">
+
+            <!-- 2FA Card -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Two-Factor Authentication (2FA)</h2>
+                  <p class="settings-card-desc">Add an extra layer of security using Google Authenticator or hardware keys.</p>
+                </div>
+                <span class="badge badge-green"><i class="fa-solid fa-shield-check" style="margin-right: 4px;"></i> Active</span>
+              </div>
+              <div class="settings-card-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                  <div>
+                    <h3 style="font-size: 14.5px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0;">Authenticator App (TOTP)</h3>
+                    <p style="font-size: 12.5px; color: var(--text-secondary); margin: 0;">Enabled on iPhone 15 Pro • Registered on Aug 14, 2026</p>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-outline" style="font-size: 12.5px;">View Backup Codes</button>
+                    <button type="button" class="btn btn-outline" style="font-size: 12.5px; color: var(--red);">Disable 2FA</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Sessions Card -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Active Login Sessions</h2>
+                  <p class="settings-card-desc">Currently authorized devices signed into your NexusPanel administrative account.</p>
+                </div>
+              </div>
+              <div class="settings-card-body" style="padding: 0;">
+                <div class="table-responsive">
+                  <table class="data-table" style="margin: 0;">
+                    <thead>
+                      <tr>
+                        <th>Device &amp; Browser</th>
+                        <th>IP Address</th>
+                        <th>Location</th>
+                        <th>Last Active</th>
+                        <th style="text-align: right;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-brands fa-apple" style="font-size: 18px; color: var(--text-primary);"></i>
+                            <div>
+                              <strong style="color: var(--text-primary); font-size: 13px;">Chrome 128 / macOS Sonoma</strong>
+                              <div style="font-size: 11px; color: var(--color-green, #10b981); font-weight: 600;">Current Session</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><code>192.0.2.148</code></td>
+                        <td>San Francisco, CA, USA</td>
+                        <td>Just now</td>
+                        <td style="text-align: right;">
+                          <span class="badge badge-green">Active</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-mobile-screen" style="font-size: 18px; color: var(--text-primary);"></i>
+                            <div>
+                              <strong style="color: var(--text-primary); font-size: 13px;">Safari / iOS 18 (iPhone)</strong>
+                              <div style="font-size: 11px; color: var(--text-muted);">Mobile Client</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><code>198.51.100.42</code></td>
+                        <td>San Jose, CA, USA</td>
+                        <td>2 hours ago</td>
+                        <td style="text-align: right;">
+                          <button class="btn btn-outline revoke-session-btn" style="padding: 4px 8px; font-size: 11.5px; color: var(--red);">
+                            Revoke
+                          </button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-brands fa-windows" style="font-size: 18px; color: var(--text-primary);"></i>
+                            <div>
+                              <strong style="color: var(--text-primary); font-size: 13px;">Edge / Windows 11</strong>
+                              <div style="font-size: 11px; color: var(--text-muted);">Office Desktop</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><code>203.0.113.89</code></td>
+                        <td>New York, NY, USA</td>
+                        <td>3 days ago</td>
+                        <td style="text-align: right;">
+                          <button class="btn btn-outline revoke-session-btn" style="padding: 4px 8px; font-size: 11.5px; color: var(--red);">
+                            Revoke
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone Card -->
+            <div class="settings-card" style="border-color: rgba(239, 68, 68, 0.3);">
+              <div class="settings-card-header" style="background: rgba(239, 68, 68, 0.05);">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title" style="color: var(--red);"><i class="fa-solid fa-triangle-exclamation" style="margin-right: 6px;"></i> Danger Zone</h2>
+                  <p class="settings-card-desc">Irreversible administrative actions that affect store ownership and data retention.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                  <div>
+                    <h3 style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); margin: 0 0 4px 0;">Transfer Organization Ownership</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Grant principal billing authority and root permissions to another verified administrator.</p>
+                  </div>
+                  <button type="button" class="btn btn-outline" style="color: var(--red); border-color: var(--red);">Transfer Ownership</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= TAB 5: BILLING & PLANS ================= -->
+          <div class="settings-tab-panel" id="tab-billing">
+
+            <!-- Active Plan Card -->
+            <div class="billing-highlight-card">
+              <div class="billing-plan-info">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="badge badge-purple" style="font-size: 11px;">Current Subscription</span>
+                  <span class="badge badge-green">Active</span>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 800; color: var(--text-primary); margin: 4px 0;">Enterprise Pro Tier</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Unlimited SKU catalog, dedicated priority support SLA, automated backups, and unlimited staff seats.</p>
+              </div>
+              <div style="text-align: right; flex-shrink: 0;">
+                <div class="billing-price">
+                  $199 <span>/ month</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Renews on Nov 15, 2026</div>
+                <button type="button" class="btn btn-primary" style="margin-top: 12px;">Upgrade Plan</button>
+              </div>
+            </div>
+
+            <!-- Payment Method Card -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Payment Method</h2>
+                  <p class="settings-card-desc">Primary credit card used for monthly software subscriptions and automated app charges.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="payment-method-card">
+                  <div class="payment-method-left">
+                    <i class="fa-brands fa-cc-mastercard payment-card-icon"></i>
+                    <div>
+                      <strong style="color: var(--text-primary); font-size: 14px;">Mastercard ending in 5824</strong>
+                      <div style="font-size: 12px; color: var(--text-muted);">Expires 09/2028 • Default Billing Card</div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline" style="font-size: 12.5px;">Update Card</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invoices Table -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Billing Invoices</h2>
+                  <p class="settings-card-desc">Download past VAT invoices and tax documentation for enterprise bookkeeping.</p>
+                </div>
+              </div>
+              <div class="settings-card-body" style="padding: 0;">
+                <div class="table-responsive">
+                  <table class="data-table" style="margin: 0;">
+                    <thead>
+                      <tr>
+                        <th>Invoice Reference</th>
+                        <th>Billing Period</th>
+                        <th>Amount Paid</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Receipt</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>#INV-2026-009</strong></td>
+                        <td>Oct 15, 2026 – Nov 15, 2026</td>
+                        <td>$199.00 USD</td>
+                        <td><span class="badge badge-green">Paid</span></td>
+                        <td style="text-align: right;">
+                          <a href="#" class="btn btn-outline" style="padding: 4px 8px; font-size: 11.5px;">
+                            <i class="fa-solid fa-download"></i> PDF
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>#INV-2026-008</strong></td>
+                        <td>Sep 15, 2026 – Oct 15, 2026</td>
+                        <td>$199.00 USD</td>
+                        <td><span class="badge badge-green">Paid</span></td>
+                        <td style="text-align: right;">
+                          <a href="#" class="btn btn-outline" style="padding: 4px 8px; font-size: 11.5px;">
+                            <i class="fa-solid fa-download"></i> PDF
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td><strong>#INV-2026-007</strong></td>
+                        <td>Aug 15, 2026 – Sep 15, 2026</td>
+                        <td>$199.00 USD</td>
+                        <td><span class="badge badge-green">Paid</span></td>
+                        <td style="text-align: right;">
+                          <a href="#" class="btn btn-outline" style="padding: 4px 8px; font-size: 11.5px;">
+                            <i class="fa-solid fa-download"></i> PDF
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= TAB 6: INTEGRATIONS & API ================= -->
+          <div class="settings-tab-panel" id="tab-integrations">
+
+            <!-- Connected Applications Grid -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Connected Services &amp; Apps</h2>
+                  <p class="settings-card-desc">Sync payment processors, marketing platforms, and automated workflow pipelines.</p>
+                </div>
+              </div>
+              <div class="settings-card-body">
+                <div class="integrations-grid">
+                  
+                  <!-- Stripe -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon stripe"><i class="fa-brands fa-stripe"></i></div>
+                      <label class="switch" aria-label="Stripe Integration toggle">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Stripe Payments</h3>
+                      <p class="integration-desc">Accept global credit cards, Apple Pay, and automated recurring billing.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--color-green, #10b981); font-weight: 600;">
+                      <i class="fa-solid fa-circle-check"></i> Connected
+                    </div>
+                  </div>
+
+                  <!-- Slack -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon slack"><i class="fa-brands fa-slack"></i></div>
+                      <label class="switch" aria-label="Slack Integration toggle">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Slack Channels</h3>
+                      <p class="integration-desc">Stream real-time high-ticket order alerts into your team's #nexus-orders channel.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--color-green, #10b981); font-weight: 600;">
+                      <i class="fa-solid fa-circle-check"></i> Connected
+                    </div>
+                  </div>
+
+                  <!-- Shopify -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon shopify"><i class="fa-brands fa-shopify"></i></div>
+                      <label class="switch" aria-label="Shopify Integration toggle">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Shopify Multichannel</h3>
+                      <p class="integration-desc">Bi-directional inventory synchronization and order fulfillment tracking.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--color-green, #10b981); font-weight: 600;">
+                      <i class="fa-solid fa-circle-check"></i> Connected
+                    </div>
+                  </div>
+
+                  <!-- Mailchimp -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon mailchimp"><i class="fa-brands fa-mailchimp"></i></div>
+                      <label class="switch" aria-label="Mailchimp Integration toggle">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Mailchimp CRM</h3>
+                      <p class="integration-desc">Automated newsletter segmentation and abandoned cart email campaigns.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--color-green, #10b981); font-weight: 600;">
+                      <i class="fa-solid fa-circle-check"></i> Connected
+                    </div>
+                  </div>
+
+                  <!-- Google Analytics -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon google"><i class="fa-brands fa-google"></i></div>
+                      <label class="switch" aria-label="Google Analytics toggle">
+                        <input type="checkbox" checked />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Google Analytics 4</h3>
+                      <p class="integration-desc">Track enhanced e-commerce conversion funnels and UTM marketing campaign ROI.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--color-green, #10b981); font-weight: 600;">
+                      <i class="fa-solid fa-circle-check"></i> Connected
+                    </div>
+                  </div>
+
+                  <!-- Zapier -->
+                  <div class="integration-card">
+                    <div class="integration-top">
+                      <div class="integration-icon zapier"><i class="fa-solid fa-bolt-lightning"></i></div>
+                      <label class="switch" aria-label="Zapier toggle">
+                        <input type="checkbox" />
+                        <span class="slider"></span>
+                      </label>
+                    </div>
+                    <div>
+                      <h3 class="integration-title">Zapier Webhooks</h3>
+                      <p class="integration-desc">Connect custom webhooks and trigger workflows across 5,000+ business applications.</p>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">
+                      <i class="fa-solid fa-circle-pause"></i> Inactive
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Developer API Keys -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-header-left">
+                  <h2 class="settings-card-title">Developer API Access</h2>
+                  <p class="settings-card-desc">Authenticate custom headless store apps and backend inventory microservices.</p>
+                </div>
+                <button type="button" class="btn btn-outline" style="font-size: 12px;">
+                  <i class="fa-solid fa-plus"></i> Generate New Key
+                </button>
+              </div>
+              <div class="settings-card-body">
+                <div class="form-group">
+                  <label class="form-label">Live Production Secret Key</label>
+                  <div class="api-key-box">
+                    <span class="api-key-code" id="apiKeyText">nx_live_••••••••••••••••••••••••••••</span>
+                    <button type="button" class="icon-btn" id="toggleKeyVisibilityBtn" title="Reveal / Hide Key">
+                      <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline" id="copyApiKeyBtn" style="padding: 5px 10px; font-size: 12px;">
+                      <i class="fa-regular fa-copy"></i> Copy Key
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Webhook Destination URL</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="url" class="form-input" value="https://api.nexuspanel.io/v1/webhooks/orders" style="flex: 1;" />
+                    <button type="button" class="btn btn-outline" style="flex-shrink: 0;">Send Test Ping</button>
+                  </div>
+                </div>
+              </div>
+              <div class="settings-card-footer">
+                <button type="button" class="btn btn-primary save-settings-btn">
+                  <i class="fa-solid fa-floppy-disk"></i> Save API Config
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- Popover Backdrop -->
+  <div class="popover-backdrop" id="popoverBackdrop"></div>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/settings.js"></script>
+</body>
+</html>
