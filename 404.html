@@ -71,39 +71,6 @@
       z-index: 0;
     }
 
-    /* Top-right floating controls */
-    .error-top-controls {
-      position: fixed;
-      top: 18px;
-      right: 20px;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .error-ctrl-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-strong);
-      color: var(--text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all var(--trans);
-      font-size: 14px;
-      box-shadow: var(--shadow-sm);
-      text-decoration: none;
-    }
-    .error-ctrl-btn:hover {
-      color: var(--accent-light);
-      border-color: var(--accent);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-    }
-
     /* Wrapper container */
     .error-wrapper {
       width: 100%;
@@ -300,16 +267,6 @@
   <div class="error-glow-top"></div>
   <div class="error-glow-bottom"></div>
 
-  <!-- Top-Right Controls -->
-  <div class="error-top-controls">
-    <a href="index.html" class="error-ctrl-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
-      <i class="fa-solid fa-house"></i>
-    </a>
-    <button class="error-ctrl-btn" id="errorThemeToggle" title="Toggle Theme" aria-label="Toggle Theme">
-      <i class="fa-solid fa-moon" id="errorThemeIcon"></i>
-    </button>
-  </div>
-
   <!-- Main Error Content Wrapper -->
   <div class="error-wrapper">
     <div class="error-card">
@@ -364,26 +321,5 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script>
-    // Theme Toggle Handler
-    const errorThemeToggle = document.getElementById('errorThemeToggle');
-    const errorThemeIcon = document.getElementById('errorThemeIcon');
-
-    function syncThemeIcon() {
-      const isLight = document.documentElement.classList.contains('light-mode') || document.body.classList.contains('light-mode');
-      if (errorThemeIcon) {
-        errorThemeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      }
-    }
-    syncThemeIcon();
-
-    errorThemeToggle?.addEventListener('click', () => {
-      const isLight = document.documentElement.classList.toggle('light-mode');
-      document.body.classList.toggle('light-mode', isLight);
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      syncThemeIcon();
-    });
-  </script>
 </body>
 </html>
