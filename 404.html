@@ -21,196 +21,368 @@
   </script>
 
   <link rel="stylesheet" href="assets/css/style.css" />
-  <link rel="stylesheet" href="assets/css/auth.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
-    .error-container {
+    /* Reset body specifically for 404 so it never gets clipped */
+    body.error-body {
       min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    /* Ambient background glows */
+    .error-glow-top {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(124, 111, 247, 0.18) 0%, rgba(124, 111, 247, 0) 70%);
+      pointer-events: none;
+      filter: blur(60px);
+      z-index: 0;
+    }
+    .error-glow-bottom {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 450px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(56, 189, 248, 0) 70%);
+      pointer-events: none;
+      filter: blur(60px);
+      z-index: 0;
+    }
+
+    /* Top-right floating controls */
+    .error-top-controls {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .error-ctrl-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--trans);
+      font-size: 14px;
+      box-shadow: var(--shadow-sm);
+      text-decoration: none;
+    }
+    .error-ctrl-btn:hover {
+      color: var(--accent-light);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Wrapper container */
+    .error-wrapper {
+      width: 100%;
+      max-width: 520px;
       padding: 32px 20px;
+      margin: auto;
       position: relative;
       z-index: 1;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
     }
+
+    /* Main Error Card */
     .error-card {
       background: var(--bg-card);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-lg);
-      padding: 48px 36px;
-      max-width: 560px;
+      padding: 36px 32px 28px;
       width: 100%;
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
       position: relative;
-      overflow: hidden;
-      animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      text-align: center;
+      box-sizing: border-box;
+      animation: fadeSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
+    html.light-mode .error-card,
+    body.light-mode .error-card {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.09);
+      box-shadow: 0 12px 32px rgba(124, 111, 247, 0.08);
+    }
+
+    /* Centered Brand Logo Row */
+    .brand-center-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-bottom: 20px;
+    }
+    .brand-center-link .logo-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--grad-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+    .brand-center-link .logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      background: var(--grad-purple);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Error Code 404 */
     .error-code {
-      font-size: clamp(80px, 15vw, 120px);
+      font-size: 82px;
       font-weight: 900;
       line-height: 1;
       letter-spacing: -3px;
       background: linear-gradient(135deg, var(--accent) 0%, #a855f7 50%, #38bdf8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-      display: inline-block;
-      filter: drop-shadow(0 4px 18px rgba(124, 111, 247, 0.35));
+      background-clip: text;
+      margin: 8px 0 14px;
+      filter: drop-shadow(0 4px 16px rgba(124, 111, 247, 0.28));
+      user-select: none;
     }
+
     .error-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 14px;
+      padding: 4px 12px;
       border-radius: 99px;
       background: rgba(124, 111, 247, 0.12);
       border: 1px solid rgba(124, 111, 247, 0.25);
       color: var(--accent);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
+      letter-spacing: 0.4px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 20px;
     }
+
     .error-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin: 0 0 10px;
+      letter-spacing: -0.3px;
     }
+
     .error-desc {
-      font-size: 14.5px;
+      font-size: 13.5px;
       color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 32px;
-      max-width: 440px;
-      margin-left: auto;
-      margin-right: auto;
+      line-height: 1.55;
+      margin: 0 auto 24px;
+      max-width: 390px;
     }
+
+    /* Action Buttons */
     .error-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
+      align-items: center;
     }
+    .error-actions .btn {
+      padding: 10px 20px;
+      font-size: 13.5px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Quick Links Bar inside the card */
     .error-quick-links {
-      margin-top: 36px;
-      padding-top: 24px;
+      margin-top: 26px;
+      padding-top: 18px;
       border-top: 1px solid var(--border);
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
-      font-size: 13px;
+      gap: 16px;
+      font-size: 12.5px;
     }
     .error-quick-links a {
-      color: var(--text-muted);
+      color: var(--text-secondary);
       text-decoration: none;
-      transition: color var(--trans);
+      transition: color var(--trans), transform var(--trans);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      font-weight: 500;
     }
     .error-quick-links a:hover {
       color: var(--accent);
+      transform: translateY(-1px);
     }
-    .theme-corner-toggle {
-      position: absolute;
-      top: 24px;
-      right: 24px;
-      z-index: 10;
+    .error-quick-links a i {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    /* Bottom Copyright Note */
+    .error-bottom-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 18px;
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+
+    @media (max-width: 480px) {
+      .error-card {
+        padding: 28px 20px 22px;
+      }
+      .error-code {
+        font-size: 68px;
+      }
+      .error-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      .error-actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .error-quick-links {
+        gap: 12px;
+      }
     }
   </style>
 </head>
-<body class="auth-body">
+<body class="error-body">
   <script>
     if (document.documentElement.classList.contains('light-mode')) document.body.classList.add('light-mode');
   </script>
 
-  <!-- Top-Right Theme Toggle -->
-  <div class="theme-corner-toggle">
-    <button class="icon-btn" id="errorThemeToggle" aria-label="Toggle Theme" style="background: var(--bg-card); border: 1px solid var(--border);">
+  <!-- Ambient Glows -->
+  <div class="error-glow-top"></div>
+  <div class="error-glow-bottom"></div>
+
+  <!-- Top-Right Controls -->
+  <div class="error-top-controls">
+    <a href="index.html" class="error-ctrl-btn" title="Back to Dashboard" aria-label="Back to Dashboard">
+      <i class="fa-solid fa-house"></i>
+    </a>
+    <button class="error-ctrl-btn" id="errorThemeToggle" title="Toggle Theme" aria-label="Toggle Theme">
       <i class="fa-solid fa-moon" id="errorThemeIcon"></i>
     </button>
   </div>
 
-  <div class="auth-wrapper">
-    <!-- Ambient Background Glows -->
-    <div class="auth-glow-top"></div>
-    <div class="auth-glow-bottom"></div>
+  <!-- Main Error Content Wrapper -->
+  <div class="error-wrapper">
+    <div class="error-card">
 
-    <div class="error-container">
-      <div class="error-card">
-        
-        <!-- Logo -->
-        <a href="index.html" class="brand-logo-row" style="text-decoration: none; justify-content: center; margin-bottom: 24px;">
-          <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
-          <span class="logo-text">NexusPanel</span>
+      <!-- Logo Header -->
+      <a href="index.html" class="brand-center-link" title="NexusPanel Dashboard">
+        <div class="logo-icon"><i class="fa-solid fa-bolt"></i></div>
+        <span class="logo-text">NexusPanel</span>
+      </a>
+
+      <!-- Error Badge -->
+      <div>
+        <span class="error-badge">
+          <i class="fa-solid fa-circle-exclamation"></i> Error 404
+        </span>
+      </div>
+
+      <!-- Large 404 Display -->
+      <div class="error-code">404</div>
+
+      <!-- Heading & Description -->
+      <h1 class="error-title">Page Not Found</h1>
+      <p class="error-desc">
+        The administration view or resource you requested could not be located. It may have been moved, renamed, or is temporarily unavailable.
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="error-actions">
+        <a href="index.html" class="btn btn-primary">
+          <i class="fa-solid fa-house"></i>
+          <span>Back to Dashboard</span>
         </a>
-
-        <div>
-          <span class="error-badge">
-            <i class="fa-solid fa-triangle-exclamation"></i> Error 404
-          </span>
-        </div>
-
-        <div class="error-code">404</div>
-
-        <h1 class="error-title">Page Not Found</h1>
-        <p class="error-desc">
-          The administration view or resource you requested could not be found. It may have been moved, renamed, or is temporarily unavailable.
-        </p>
-
-        <div class="error-actions">
-          <a href="index.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 14px;">
-            <i class="fa-solid fa-house"></i>
-            <span>Back to Dashboard</span>
-          </a>
-          <button type="button" class="btn btn-outline" onclick="history.back();" style="padding: 12px 20px; font-size: 14px;">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>Go Back</span>
-          </button>
-        </div>
-
-        <div class="error-quick-links">
-          <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i> Orders</a>
-          <a href="products.html"><i class="fa-solid fa-box"></i> Products</a>
-          <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
-          <a href="help.html"><i class="fa-solid fa-circle-question"></i> Help Center</a>
-        </div>
-
+        <button type="button" class="btn btn-outline" onclick="history.back();">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Go Back</span>
+        </button>
       </div>
 
-      <div class="auth-bottom-note" style="margin-top: 24px;">
-        &copy; 2026 NexusPanel Inc. All rights reserved.
+      <!-- Quick Navigation Shortcuts -->
+      <div class="error-quick-links">
+        <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i> Orders</a>
+        <a href="products.html"><i class="fa-solid fa-box"></i> Products</a>
+        <a href="customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+        <a href="help.html"><i class="fa-solid fa-circle-question"></i> Help Center</a>
       </div>
+
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="error-bottom-note">
+      &copy; 2026 NexusPanel Inc. All rights reserved.
     </div>
   </div>
 
+  <!-- Scripts -->
   <script>
-    // Theme toggle handler
+    // Theme Toggle Handler
     const errorThemeToggle = document.getElementById('errorThemeToggle');
     const errorThemeIcon = document.getElementById('errorThemeIcon');
 
-    function syncIcon() {
-      const isLight = document.body.classList.contains('light-mode');
+    function syncThemeIcon() {
+      const isLight = document.documentElement.classList.contains('light-mode') || document.body.classList.contains('light-mode');
       if (errorThemeIcon) {
         errorThemeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
       }
     }
-    syncIcon();
+    syncThemeIcon();
 
     errorThemeToggle?.addEventListener('click', () => {
-      const isLight = document.body.classList.toggle('light-mode');
-      document.documentElement.classList.toggle('light-mode', isLight);
+      const isLight = document.documentElement.classList.toggle('light-mode');
+      document.body.classList.toggle('light-mode', isLight);
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      syncIcon();
+      syncThemeIcon();
     });
   </script>
 </body>
